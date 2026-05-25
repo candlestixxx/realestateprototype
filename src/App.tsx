@@ -1,0 +1,525 @@
+import { useState, useEffect, useRef } from 'react';
+import { 
+  LayoutDashboard, 
+  Library,
+  X,
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Trash2,
+  Maximize2,
+  Minimize2,
+  CheckCircle2,
+  Bell,
+  Search,
+  Upload,
+  Sparkles,
+  Users,
+  Database
+} from 'lucide-react';
+import './App.css';
+
+// Types
+interface CalendarEvent {
+  id: string;
+  day: number;
+  month: number;
+  year: number;
+  time: string;
+  title: string;
+  type: 'listing' | 'report' | 'social';
+  approved?: boolean;
+}
+
+function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
+  const [isCompressed, setIsCompressed] = useState(false);
+  const [aiSearchTopic, setAiSearchTopic] = useState('');
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [viewDate, setViewDate] = useState(new Date());
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [calendarView, setCalendarView] = useState<'month' | 'week'>('month');
+  const [tourStep, setTourStep] = useState<number | null>(() => {
+    return localStorage.getItem('legacy_tour_completed') === 'true' ? null : 0;
+  });
+  
+  const tourGuides = [
+    {
+      title: "👋 Welcome to Command Center",
+      content: "This is your authority footprint. Start by checking your **Reach** and **MLS Sync** stats to see how your brand is performing today.",
+      target: "stats-grid"
+    },
+    {
+      title: "📅 Your Interactive Calendar",
+      content: "This isn't just a view—it's a tool. **Click a single day** to focus your planning, or **click multiple days** to prepare a week's worth of content at once.",
+      target: "mini-calendar"
+    },
+    {
+      title: "✨ AI Strategy Input",
+      content: "Once you've selected your dates, type a topic here. Our AI will combine your brand voice with local market data to generate optimized posts.",
+      target: "ai-input-wrapper"
+    },
+    {
+      title: "🚀 The Power Combination",
+      content: "Try this: Select **3 future days**, type 'Market Update', and hit **Bulk Schedule**. You've just automated half your week in 10 seconds!",
+      target: "btn-generate-green"
+    }
+  ];
+
+  const nextTourStep = () => {
+    if (tourStep !== null && tourStep < tourGuides.length - 1) {
+      setTourStep(tourStep + 1);
+    } else {
+      completeTour();
+    }
+  };
+
+  const completeTour = () => {
+    localStorage.setItem('legacy_tour_completed', 'true');
+    setTourStep(null);
+  };
+  
+  const [scheduledEvents, setScheduledEvents] = useState<CalendarEvent[]>(() => {
+    const saved = localStorage.getItem('legacy_calendar_events');
+    if (saved) return JSON.parse(saved);
+    return [
+      { id: '1', day: 14, month: 3, year: 2026, time: '10:00 AM', title: 'Luxury Villa Listing', type: 'listing' },
+      { id: '2', day: 15, month: 3, year: 2026, time: '02:30 PM', title: 'Market Report: Beverly Hills', type: 'report' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('legacy_calendar_events', JSON.stringify(scheduledEvents));
+  }, [scheduledEvents]);
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  const handleAiGenerate = () => {
+    if (!aiSearchTopic) {
+      setNotification("Please enter a topic for your content.");
+      return;
+    }
+    
+    const targetDates = selectedDates.length > 0 ? selectedDates : [new Date()];
+    const newEvents: CalendarEvent[] = targetDates.map(date => ({
+      id: Math.random().toString(36).substr(2, 9),
+      day: date.getDate(),
+      month: date.getMonth(),
+      year: date.getFullYear(),
+      time: "09:00 AM",
+      title: `AI: ${aiSearchTopic}`,
+      type: 'social'
+    }));
+
+    setScheduledEvents([...scheduledEvents, ...newEvents]);
+    setAiSearchTopic('');
+    setAttachments([]);
+    setNotification(`AI scheduled for ${targetDates.length} day(s).`);
+    setSelectedDates([]);
+  };
+
+  const handleQuickTool = (title: string, type: 'listing' | 'report' | 'social') => {
+    const targetDates = selectedDates.length > 0 ? selectedDates : [new Date()];
+    const newEvents: CalendarEvent[] = targetDates.map(date => ({
+      id: Math.random().toString(36).substr(2, 9),
+      day: date.getDate(),
+      month: date.getMonth(),
+      year: date.getFullYear(),
+      time: "10:00 AM",
+      title: title,
+      type: type
+    }));
+
+    setScheduledEvents([...scheduledEvents, ...newEvents]);
+    setNotification(`${title} scheduled for ${targetDates.length} day(s).`);
+    setSelectedDates([]);
+  };
+
+  const toggleDateSelection = (date: Date) => {
+    setSelectedDates(prev => {
+      const exists = prev.find(d => 
+        d.getDate() === date.getDate() && 
+        d.getMonth() === date.getMonth() && 
+        d.getFullYear() === date.getFullYear()
+      );
+      if (exists) {
+        return prev.filter(d => d !== exists);
+      } else {
+        return [...prev, date];
+      }
+    });
+  };
+
+  const hideTutorialPermanently = () => {
+    localStorage.setItem('legacy_tutorial_hidden', 'true');
+    setShowTutorial(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setAttachments(prev => [...prev, ...newFiles]);
+      setNotification(`${newFiles.length} file(s) attached successfully.`);
+    }
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const daysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay();
+
+  const handlePrevMonth = () => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1));
+  const handleNextMonth = () => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
+
+  const renderCalendarGrid = (isDashboard = false) => {
+    if (calendarView === 'week' && !isDashboard) {
+      // Week View Logic
+      const startOfWeek = new Date(viewDate);
+      startOfWeek.setDate(viewDate.getDate() - viewDate.getDay());
+      
+      return (
+        <div className="calendar-grid week-view">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => {
+            const date = new Date(startOfWeek);
+            date.setDate(startOfWeek.getDate() + i);
+            const isSelected = !!selectedDates.find(d => 
+              d.getDate() === date.getDate() && 
+              d.getMonth() === date.getMonth() && 
+              d.getFullYear() === date.getFullYear()
+            );
+            const events = scheduledEvents.filter(e => 
+              e.day === date.getDate() && 
+              e.month === date.getMonth() && 
+              e.year === date.getFullYear()
+            );
+
+            return (
+              <div key={day} className="calendar-column">
+                <div className="calendar-day-head">{day} {date.getDate()}</div>
+                <div 
+                  className={`calendar-day week-day ${isSelected ? 'selected' : ''}`}
+                  onClick={() => toggleDateSelection(new Date(date))}
+                >
+                  <div className="day-events-container">
+                    {events.map((e, ei) => (
+                      <div key={ei} className={`calendar-event ${e.type}`} title={e.title}>
+                        <div className="event-time">{e.time}</div>
+                        <div className="event-title">{e.title}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Month View Logic (Original but with multi-select)
+    const firstDay = firstDayOfMonth(viewDate.getMonth(), viewDate.getFullYear());
+    const totalDays = daysInMonth(viewDate.getMonth(), viewDate.getFullYear());
+    
+    return (
+      <div className={`calendar-grid ${isDashboard ? 'dashboard-grid' : ''}`}>
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          <div key={day} className="calendar-day-head">{day}</div>
+        ))}
+        {Array.from({ length: 42 }).map((_, i) => {
+          const dayNum = i - firstDay + 1;
+          const isCurrentMonth = dayNum > 0 && dayNum <= totalDays;
+          const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNum);
+          const isSelected = !!selectedDates.find(d => 
+            d.getDate() === dayNum && 
+            d.getMonth() === viewDate.getMonth() && 
+            d.getFullYear() === viewDate.getFullYear()
+          );
+          
+          const events = scheduledEvents.filter(e => e.day === dayNum && e.month === viewDate.getMonth() && e.year === viewDate.getFullYear());
+          
+          return (
+            <div 
+              key={i} 
+              className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isCompressed ? 'compressed' : ''} ${isSelected ? 'selected' : ''}`}
+              onClick={() => isCurrentMonth && toggleDateSelection(date)}
+            >
+              {isCurrentMonth && (
+                <>
+                  <span className="day-number">{dayNum}</span>
+                  <div className="day-events-container">
+                    {events.map((e, ei) => (
+                      <div key={ei} className={`calendar-event ${e.type}`} title={e.title}>
+                        {isDashboard ? '' : e.title}
+                      </div>
+                    ))}
+                  </div>
+                  {isDashboard && events.length > 0 && (
+                    <span className="event-count-badge">{events.length}</span>
+                  )}
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderCalendarHeader = (isDashboard = false) => (
+    <div className="calendar-header">
+      <div style={{display: 'flex', alignItems: 'center', gap: '1.5rem'}}>
+        <h2 style={{fontSize: '1.25rem', fontWeight: 800, color: '#0A192F'}}>
+          {calendarView === 'month' || isDashboard
+            ? viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })
+            : `Week of ${new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate() - viewDate.getDay()).toLocaleDateString('default', { month: 'short', day: 'numeric' })}`}
+        </h2>
+        <div style={{display: 'flex', gap: '0.25rem', background: '#F1F5F9', padding: '4px', borderRadius: '8px'}}>
+          <button className="btn btn-outline" style={{padding: '0.4rem'}} onClick={handlePrevMonth}><ChevronLeft size={16} /></button>
+          <button className="btn btn-outline" style={{padding: '0.4rem'}} onClick={handleNextMonth}><ChevronRight size={16} /></button>
+        </div>
+      </div>
+      
+      {!isDashboard && (
+        <div className="view-switcher">
+          <button 
+            className={`view-btn ${calendarView === 'month' ? 'active' : ''}`}
+            onClick={() => setCalendarView('month')}
+          >
+            Month
+          </button>
+          <button 
+            className={`view-btn ${calendarView === 'week' ? 'active' : ''}`}
+            onClick={() => setCalendarView('week')}
+          >
+            Week
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderPlanningHeader = () => (
+    <section className="planning-section">
+      {tourStep !== null && (
+        <div className={`tour-guide-overlay step-${tourStep}`}>
+          <div className="tour-guide-card">
+            <div className="tour-badge">{tourStep + 1} of {tourGuides.length}</div>
+            <h3>{tourGuides[tourStep].title}</h3>
+            <p dangerouslySetInnerHTML={{ __html: tourGuides[tourStep].content }}></p>
+            <div className="tour-footer">
+              <button className="btn btn-link" onClick={completeTour}>Skip Tour</button>
+              <button className="btn btn-primary-gold" onClick={nextTourStep}>
+                {tourStep === tourGuides.length - 1 ? "Start Planning!" : "Next Step"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="planning-header-text">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h1>Let's plan your Social Media Content</h1>
+            <p>Harness the power of AI to compile market trends, local listings, and your unique brand voice into a winning strategy.</p>
+          </div>
+          {selectedDates.length > 0 && (
+            <div className="selected-date-badge multi">
+              <CalendarIcon size={16} />
+              <span><strong>{selectedDates.length}</strong> Days Selected</span>
+              <button className="clear-date" onClick={() => setSelectedDates([])}><X size={14} /></button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="ai-search-container">
+        <div className="ai-input-wrapper">
+          <Sparkles size={20} style={{position: 'absolute', left: '1.25rem', top: '1.25rem', color: '#C5A059'}} />
+          <input 
+            type="text" 
+            className="ai-input" 
+            placeholder={selectedDates.length > 0 ? `Schedule content for ${selectedDates.length} days...` : "What would you like your content to focus on this week?"}
+            value={aiSearchTopic}
+            onChange={(e) => setAiSearchTopic(e.target.value)}
+          />
+        </div>
+        
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleFileChange} 
+          multiple 
+          accept="image/*,video/*" 
+          style={{ display: 'none' }} 
+        />
+
+        <button className="btn-attachment" onClick={triggerFileUpload}>
+          <Upload size={18} />
+          {attachments.length > 0 ? `${attachments.length} Attached` : 'Add attachment'}
+        </button>
+        <button className="btn-generate-green" onClick={handleAiGenerate}>
+          {selectedDates.length > 0 ? 'Bulk Schedule' : 'Generate'}
+        </button>
+      </div>
+
+      {attachments.length > 0 && (
+        <div className="attachments-preview">
+          {attachments.map((file, idx) => (
+            <div key={idx} className="attachment-chip">
+              <span>{file.name}</span>
+              <X 
+                size={12} 
+                onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))} 
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="quick-tools-grid">
+        <button className="quick-tool-btn" onClick={() => handleQuickTool("Property Listing (MLS Sync)", "listing")}>
+          <Database size={16} />
+          Create Property Listing (MLS Sync)
+        </button>
+        <button className="quick-tool-btn" onClick={() => handleQuickTool("AI Twin Post", "social")}>
+          <Users size={16} />
+          Create AI Twin Post
+        </button>
+        <button className="quick-tool-btn" onClick={() => handleQuickTool("Social Market Report", "report")}>
+          <FileText size={16} />
+          Create Social Market Report
+        </button>
+      </div>
+    </section>
+  );
+
+  return (
+    <div className="dashboard-layout">
+      {notification && (
+        <div style={{
+          position: 'fixed', top: '20px', right: '20px', background: '#0A192F', color: 'white',
+          padding: '1rem 2rem', borderRadius: '8px', zIndex: 10000, boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+          borderLeft: '4px solid #C5A059', animation: 'slideIn 0.3s ease-out'
+        }}>
+          {notification}
+        </div>
+      )}
+
+      <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+        <button className="sidebar-collapse-btn" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
+          {isSidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
+        <div className="sidebar-logo">{isSidebarCollapsed ? <span>L1</span> : <>LEGACY<span>ONE</span></>}</div>
+        <nav className="nav-menu">
+          <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}><LayoutDashboard size={20} />{!isSidebarCollapsed && <span>Dashboard</span>}</div>
+          <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}><CalendarIcon size={20} />{!isSidebarCollapsed && <span>Content Calendar</span>}</div>
+          <div className={`nav-item ${activeTab === 'library' ? 'active' : ''}`} onClick={() => setActiveTab('library')}><Library size={20} />{!isSidebarCollapsed && <span>Content Library</span>}</div>
+        </nav>
+        <div className="sidebar-footer">
+          <div className="plan-badge">LEGACY PRO</div>
+        </div>
+      </aside>
+
+      <main className={`main-content ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <header className="top-bar">
+          <div className="search-bar"><Search size={16} /><input type="text" placeholder="Search strategy..." /></div>
+          <div className="user-profile" style={{ gap: '1rem' }}>
+            <button 
+              className="help-btn" 
+              onClick={() => { setTourStep(0); setNotification("Restarting guided tour..."); }}
+              title="Guided Tour"
+            >
+              <Sparkles size={18} />
+              <span>Help</span>
+            </button>
+            <Bell size={20} />
+            <div className="avatar">JD</div>
+          </div>
+        </header>
+
+        {renderPlanningHeader()}
+
+        <div className="page-container" style={{paddingTop: 0}}>
+          {activeTab === 'dashboard' && (
+            <div className="view-dashboard">
+              <div className="page-header" style={{marginBottom: '1rem'}}>
+                <h1>Command Center</h1>
+                <p style={{color: '#64748B'}}>Overview of your authority footprint.</p>
+              </div>
+              <div className="dashboard-content-layout">
+                <div className="dashboard-stats-column">
+                  <div className="stats-grid" style={{marginBottom: '2rem'}}>
+                    {[{l: 'AI Generations', v: 124}, {l: 'MLS Synced', v: 42}, {l: 'Reports', v: 12}, {l: 'Reach', v: '85k'}].map((s, i) => (
+                      <div key={i} className="stat-card">
+                        <h4>{s.l}</h4>
+                        <div className="value">{s.v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="dashboard-info-card">
+                    <h3>Quick Tips</h3>
+                    <ul>
+                      <li>Click a day on the calendar to schedule content.</li>
+                      <li>Use "Create AI Twin Post" for personalized engagement.</li>
+                      <li>MLS Sync is active for Beverly Hills region.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="dashboard-calendar-column">
+                  <div className="calendar-container mini-calendar">
+                    {renderCalendarHeader(true)}
+                    {renderCalendarGrid(true)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'calendar' && (
+            <div className="view-calendar">
+              <div className="calendar-actions-bar" style={{marginTop: '-1rem'}}>
+                <button className="action-btn danger" onClick={() => {setScheduledEvents(scheduledEvents.filter(e => e.month !== viewDate.getMonth())); setNotification("Month cleared.");}}>
+                  <Trash2 size={16} /> Clear Content
+                </button>
+                <button className="action-btn" onClick={() => setIsCompressed(!isCompressed)}>
+                  {isCompressed ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+                  {isCompressed ? 'Expand View' : 'Compress View'}
+                </button>
+                <button className="action-btn success" onClick={() => setNotification("Strategy approved.")}>
+                  <CheckCircle2 size={16} /> Approve Content
+                </button>
+              </div>
+
+              <div className="calendar-container">
+                {renderCalendarHeader(false)}
+                {renderCalendarGrid(false)}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'library' && (
+            <div className="view-library"><h1>Content Library</h1></div>
+          )}
+        </div>
+      </main>
+
+      <style>{`
+        .sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+      `}</style>
+    </div>
+  );
+}
+
+export default App;

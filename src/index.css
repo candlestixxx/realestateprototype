@@ -1,0 +1,4 @@
+/* Reset or global styles if needed, but App.css handles most things */
+body {
+  margin: 0;
+}
