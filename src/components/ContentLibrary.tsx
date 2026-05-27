@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { type CalendarEvent } from '../App';
-import { Database, FileText, Users, Calendar as CalendarIcon, Filter } from 'lucide-react';
+import { Database, FileText, Users, Calendar as CalendarIcon, Filter, ArrowDownAZ, ArrowUpZA } from 'lucide-react';
 
 interface ContentLibraryProps {
   events: CalendarEvent[];
 }
 
 type FilterOption = 'all' | 'listing' | 'report' | 'social';
+type SortOrder = 'asc' | 'desc';
 
 export const ContentLibrary = ({ events }: ContentLibraryProps) => {
   const [filter, setFilter] = useState<FilterOption>('all');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   const getIconForType = (type: string) => {
     switch (type) {
@@ -20,7 +22,13 @@ export const ContentLibrary = ({ events }: ContentLibraryProps) => {
     }
   };
 
-  const filteredEvents = events.filter(e => filter === 'all' || e.type === filter);
+  const filteredEvents = events
+    .filter(e => filter === 'all' || e.type === filter)
+    .sort((a, b) => {
+      const dateA = new Date(a.year, a.month, a.day).getTime();
+      const dateB = new Date(b.year, b.month, b.day).getTime();
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
 
   return (
     <div className="view-library">
@@ -55,6 +63,25 @@ export const ContentLibrary = ({ events }: ContentLibraryProps) => {
                 {f}
               </button>
             ))}
+
+            <div style={{ width: '1px', background: 'var(--border)', margin: '0 0.25rem' }}></div>
+
+            <button
+              onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0.5rem',
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--text-muted)',
+                borderRadius: '7px',
+                cursor: 'pointer',
+              }}
+              title={`Sort by Date: ${sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}`}
+            >
+              {sortOrder === 'asc' ? <ArrowDownAZ size={18} /> : <ArrowUpZA size={18} />}
+            </button>
           </div>
         )}
       </div>

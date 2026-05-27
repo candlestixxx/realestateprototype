@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - Content Library Sorting & Test Expansion
+### Added
+- **Chronological Sorting**: Users can now toggle between ascending and descending chronological sorting in the Content Library using the new arrow UI.
+- **Library Unit Tests**: Created `ContentLibrary.test.tsx` to ensure zero states, filtering states, and base list rendering works robustly.
+
 ## [1.3.0] - Expanded Component Test Coverage
 ### Added
 - **Component Tests**: Created robust Vitest unit tests for the `Sidebar` and `InstructionsModal` components evaluating rendering states and event fires.
