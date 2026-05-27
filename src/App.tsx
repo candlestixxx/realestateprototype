@@ -24,9 +24,10 @@ import {
 import './App.css';
 import { businessTypes, type BusinessTypeKey } from './constants';
 import { InstructionsModal } from './components/InstructionsModal';
+import { api } from './services/api';
 
 // Types
-interface CalendarEvent {
+export interface CalendarEvent {
   id: string;
   day: number;
   month: number;
@@ -79,10 +80,12 @@ function App() {
     return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
   }, []);
 
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
   const [tourStep, setTourStep] = useState<number | null>(() => {
     return localStorage.getItem('legacy_tour_completed') === 'true' ? null : 0;
   });
-  
+
   const tourGuides = [
     {
       title: "👋 Welcome to Command Center",
@@ -119,18 +122,17 @@ function App() {
     setTourStep(null);
   };
   
-  const [scheduledEvents, setScheduledEvents] = useState<CalendarEvent[]>(() => {
-    const saved = localStorage.getItem('legacy_calendar_events');
-    if (saved) return JSON.parse(saved);
-    return [
-      { id: '1', day: 14, month: 3, year: 2026, time: '10:00 AM', title: 'Luxury Villa Listing', type: 'listing' },
-      { id: '2', day: 15, month: 3, year: 2026, time: '02:30 PM', title: 'Market Report: Beverly Hills', type: 'report' },
-    ];
-  });
+  const [scheduledEvents, setScheduledEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
-    localStorage.setItem('legacy_calendar_events', JSON.stringify(scheduledEvents));
-  }, [scheduledEvents]);
+    const loadEvents = async () => {
+      setIsLoadingData(true);
+      const data = await api.fetchEvents();
+      setScheduledEvents(data);
+      setIsLoadingData(false);
+    };
+    loadEvents();
+  }, []);
 
   useEffect(() => {
     if (notification) {
@@ -161,7 +163,10 @@ function App() {
       type: 'social'
     }));
 
-    setScheduledEvents([...scheduledEvents, ...newEvents]);
+    const updatedEvents = [...scheduledEvents, ...newEvents];
+    setScheduledEvents(updatedEvents);
+    await api.saveEvents(updatedEvents);
+
     setAiSearchTopic('');
     setAttachments([]);
     setNotification(`AI scheduled for ${targetDates.length} day(s).`);
@@ -169,7 +174,7 @@ function App() {
     setIsGenerating(false);
   };
 
-  const handleQuickTool = (title: string, type: 'listing' | 'report' | 'social') => {
+  const handleQuickTool = async (title: string, type: 'listing' | 'report' | 'social') => {
     const targetDates = selectedDates.length > 0 ? selectedDates : [new Date()];
     const newEvents: CalendarEvent[] = targetDates.map(date => ({
       id: Math.random().toString(36).substr(2, 9),
@@ -181,7 +186,10 @@ function App() {
       type: type
     }));
 
-    setScheduledEvents([...scheduledEvents, ...newEvents]);
+    const updatedEvents = [...scheduledEvents, ...newEvents];
+    setScheduledEvents(updatedEvents);
+    await api.saveEvents(updatedEvents);
+
     setNotification(`${title} scheduled for ${targetDates.length} day(s).`);
     setSelectedDates([]);
   };
@@ -576,8 +584,16 @@ function App() {
                 </div>
                 <div className="dashboard-calendar-column">
                   <div className="calendar-container mini-calendar">
-                    {renderCalendarHeader(true)}
-                    {renderCalendarGrid(true)}
+                    {isLoadingData ? (
+                      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                        Loading...
+                      </div>
+                    ) : (
+                      <>
+                        {renderCalendarHeader(true)}
+                        {renderCalendarGrid(true)}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -587,7 +603,12 @@ function App() {
           {activeTab === 'calendar' && (
             <div className="view-calendar">
               <div className="calendar-actions-bar" style={{marginTop: '-1rem'}}>
-                <button className="action-btn danger" onClick={() => {setScheduledEvents(scheduledEvents.filter(e => e.month !== viewDate.getMonth())); setNotification("Month cleared.");}}>
+                <button className="action-btn danger" onClick={async () => {
+                  const updatedEvents = scheduledEvents.filter(e => e.month !== viewDate.getMonth());
+                  setScheduledEvents(updatedEvents);
+                  await api.saveEvents(updatedEvents);
+                  setNotification("Month cleared.");
+                }}>
                   <Trash2 size={16} /> Clear Content
                 </button>
                 <button className="action-btn" onClick={() => setIsCompressed(!isCompressed)}>
@@ -600,8 +621,16 @@ function App() {
               </div>
 
               <div className="calendar-container">
-                {renderCalendarHeader(false)}
-                {renderCalendarGrid(false)}
+                {isLoadingData ? (
+                  <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    Loading Calendar Data...
+                  </div>
+                ) : (
+                  <>
+                    {renderCalendarHeader(false)}
+                    {renderCalendarGrid(false)}
+                  </>
+                )}
               </div>
             </div>
           )}

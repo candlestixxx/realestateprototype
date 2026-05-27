@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - Mock API & Data Plumbing
+### Added
+- **Mock API Service**: Created `src/services/api.ts` to wrap localStorage with simulated network latency, acting as a mock database.
+- **Data Loading States**: Introduced an `isLoadingData` state to display loading indicators across the Dashboard and Calendar views while data is fetched asynchronously.
+
+### Changed
+- Refactored `App.tsx` calendar event management from synchronous local storage reads/writes to async API calls.
+
 ## [0.2.0] - UI Enhancement & Backend Prep
 ### Added
 - **Dark Mode**: Implemented full CSS variable tokenization for a complete Dark Mode theme toggled via the top bar and persisted in `localStorage`.
