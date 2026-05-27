@@ -30,8 +30,8 @@ export const api = {
     }
     // Return default seed data if none exists
     return [
-      { id: '1', day: 14, month: 3, year: 2026, time: '10:00 AM', title: 'Luxury Villa Listing', type: 'listing' },
-      { id: '2', day: 15, month: 3, year: 2026, time: '02:30 PM', title: 'Market Report: Beverly Hills', type: 'report' },
+      { id: '1', day: 14, month: 3, year: 2026, time: '10:00 AM', title: 'Luxury Villa Listing', type: 'listing', status: 'scheduled' },
+      { id: '2', day: 15, month: 3, year: 2026, time: '02:30 PM', title: 'Market Report: Beverly Hills', type: 'report', status: 'scheduled' },
     ];
   },
 

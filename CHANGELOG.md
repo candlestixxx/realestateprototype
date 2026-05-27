@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - Automated Publishing Engine Shell
+### Added
+- **Mock Background Worker**: Implemented a `setInterval` worker inside `App.tsx` that simulates background processing. It automatically polls `scheduledEvents` every 10 seconds and transitions posts from "scheduled" to "published" once their simulated timestamp matches the current time.
+- **Event Status Tracking**: Extended the `CalendarEvent` interface with a new `status: 'scheduled' | 'published'` state.
+- **UI Content Badges**: The `<ContentLibrary />` now dynamically renders visual badges (a Check Circle or an Alarm Clock icon) clearly indicating a post's real-time publication status.
+
+## [1.11.0] - Global Notification Queue System
+### Added
+- **Global `NotificationToast`**: Extracted the toast popup from `App.tsx` into a robust `NotificationToast.tsx` component.
+- **Reducer Driven Toasts**: Fired events (like generating posts or saving state) now dispatch `SET_NOTIFICATION` to the global context shell instead of maintaining isolated local states.
+
 ## [1.10.0] - Calendar & Dashboard Component Extraction
 ### Added
 - **Core View Abstraction**: Extracted the final large UI chunks from `App.tsx` into `src/components/Calendar.tsx` and `src/components/Dashboard.tsx`.

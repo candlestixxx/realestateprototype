@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { type CalendarEvent } from '../App';
-import { Database, FileText, Users, Calendar as CalendarIcon, Filter, ArrowDownAZ, ArrowUpZA } from 'lucide-react';
+import { Database, FileText, Users, Calendar as CalendarIcon, Filter, ArrowDownAZ, ArrowUpZA, AlarmClockCheck, CheckCircle2 } from 'lucide-react';
 
 interface ContentLibraryProps {
   events: CalendarEvent[];
@@ -103,10 +103,21 @@ export const ContentLibrary = ({ events }: ContentLibraryProps) => {
                   {getIconForType(event.type)}
                   {event.type.toUpperCase()}
                 </span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}>
-                  <CalendarIcon size={14} />
-                  {event.month + 1}/{event.day}/{event.year}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  {event.status === 'published' ? (
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <CheckCircle2 size={14} /> Published
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <AlarmClockCheck size={14} /> Scheduled
+                    </span>
+                  )}
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}>
+                    <CalendarIcon size={14} />
+                    {event.month + 1}/{event.day}/{event.year}
+                  </span>
+                </div>
               </div>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text-dark)' }}>{event.title}</h3>
               {event.content && (

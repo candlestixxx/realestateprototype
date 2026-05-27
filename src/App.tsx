@@ -32,6 +32,7 @@ export interface CalendarEvent {
   type: 'listing' | 'report' | 'social';
   content?: string;
   approved?: boolean;
+  status?: 'scheduled' | 'published';
 }
 
 function App() {
@@ -98,12 +99,41 @@ function App() {
     loadEvents();
   }, []);
 
+  // Simulated Background Worker for Publishing
   useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => setNotification(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification]);
+    if (scheduledEvents.length === 0) return;
+
+    const interval = setInterval(async () => {
+      let hasChanges = false;
+      const now = new Date();
+
+      const updatedEvents = scheduledEvents.map(event => {
+        if (event.status !== 'published') {
+          // Naive time parsing (e.g., "09:00 AM" to hours)
+          const isPM = event.time.includes('PM');
+          let hours = parseInt(event.time.split(':')[0], 10);
+          if (isPM && hours < 12) hours += 12;
+          if (!isPM && hours === 12) hours = 0;
+
+          const eventDate = new Date(event.year, event.month, event.day, hours);
+
+          if (eventDate <= now) {
+            hasChanges = true;
+            return { ...event, status: 'published' as const };
+          }
+        }
+        return event;
+      });
+
+      if (hasChanges) {
+        setScheduledEvents(updatedEvents);
+        await api.saveEvents(updatedEvents);
+        setNotification("Background worker published scheduled content.");
+      }
+    }, 10000); // Check every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [scheduledEvents, dispatch]);
 
   const handleAiGenerate = async () => {
     if (!aiSearchTopic) {
@@ -132,7 +162,8 @@ function App() {
         time: "09:00 AM",
         title: `AI: ${aiSearchTopic}`,
         type: 'social',
-        content: concepts[Math.floor(Math.random() * concepts.length)]
+        content: concepts[Math.floor(Math.random() * concepts.length)],
+        status: 'scheduled'
       };
     });
 
@@ -170,7 +201,8 @@ function App() {
       year: date.getFullYear(),
       time: "10:00 AM",
       title: title,
-      type: type
+      type: type,
+      status: 'scheduled'
     }));
 
     const updatedEvents = [...scheduledEvents, ...newEvents];

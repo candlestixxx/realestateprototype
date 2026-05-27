@@ -3,9 +3,9 @@ import { ContentLibrary } from './ContentLibrary';
 import { type CalendarEvent } from '../App';
 
 const mockEvents: CalendarEvent[] = [
-  { id: '1', title: 'Listing Event', type: 'listing', day: 1, month: 0, year: 2026, time: '10:00 AM' },
-  { id: '2', title: 'Social Event 1', type: 'social', day: 2, month: 0, year: 2026, time: '11:00 AM', content: 'Social Content' },
-  { id: '3', title: 'Social Event 2', type: 'social', day: 3, month: 0, year: 2026, time: '12:00 PM' },
+  { id: '1', title: 'Listing Event', type: 'listing', day: 1, month: 0, year: 2026, time: '10:00 AM', status: 'published' },
+  { id: '2', title: 'Social Event 1', type: 'social', day: 2, month: 0, year: 2026, time: '11:00 AM', content: 'Social Content', status: 'scheduled' },
+  { id: '3', title: 'Social Event 2', type: 'social', day: 3, month: 0, year: 2026, time: '12:00 PM', status: 'scheduled' },
 ];
 
 describe('ContentLibrary Component', () => {
@@ -19,6 +19,10 @@ describe('ContentLibrary Component', () => {
     expect(screen.getByText('Listing Event')).toBeInTheDocument();
     expect(screen.getByText('Social Event 1')).toBeInTheDocument();
     expect(screen.getByText('Social Event 2')).toBeInTheDocument();
+
+    // Check Status rendering
+    expect(screen.getByText('Published')).toBeInTheDocument();
+    expect(screen.getAllByText('Scheduled')).toHaveLength(2);
   });
 
   it('filters events when a category is clicked', () => {
