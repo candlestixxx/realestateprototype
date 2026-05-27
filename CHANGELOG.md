@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - Content Filtering & V1 Stable Release
+### Added
+- **Content Library Filtering**: Added a filter bar to the Content Library allowing users to instantly sort historical and upcoming posts by category type (`all`, `listing`, `report`, `social`).
+- **Baseline Feature Complete**: All core UI mocks, routing, user authentication simulation, AI draft generation tracking, and document governance directives are complete.
+
 ## [0.9.0] - Content Library Integration
 ### Added
 - **Content Library View**: Created a grid-based interface (`src/components/ContentLibrary.tsx`) to display all approved and scheduled events.

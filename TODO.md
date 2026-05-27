@@ -6,7 +6,7 @@
 *   [ ] Integrate OAuth 2.0 flows for major social media platforms.
 
 ## UI/UX Enhancements
-*   [ ] Enhance Content Library with filtering and sorting capabilities.
+*   [x] Enhance Content Library with filtering and sorting capabilities.
 *   [x] Build out the Content Library view to display scheduled/approved events.
 *   [x] Implement confirmation dialogue before executing destructive actions like clearing calendar events.
 *   [x] Add manual dismiss functionality to the notification toast overlay.
