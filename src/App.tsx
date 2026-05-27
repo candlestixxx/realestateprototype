@@ -22,6 +22,7 @@ import { TopBar } from './components/TopBar';
 import { ReviewModal } from './components/ReviewModal';
 import { Login } from './components/Login';
 import { Analytics } from './components/Analytics';
+import { ContentLibrary } from './components/ContentLibrary';
 import { api } from './services/api';
 import { type User } from './types/api';
 
@@ -594,7 +595,7 @@ function App() {
           )}
 
           {activeTab === 'library' && (
-            <div className="view-library"><h1>Content Library</h1></div>
+            <ContentLibrary events={scheduledEvents} />
           )}
 
           {activeTab === 'analytics' && <Analytics />}

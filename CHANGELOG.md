@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.0] - Content Library Integration
+### Added
+- **Content Library View**: Created a grid-based interface (`src/components/ContentLibrary.tsx`) to display all approved and scheduled events.
+- **Historical Tracking**: Integrated the `scheduledEvents` payload to stream populated content seamlessly into the library component.
+
 ## [0.8.0] - Phase 3 Analytics Preview
 ### Added
 - **Analytics Dashboard**: Created `Analytics.tsx` providing a UI layout for campaign tracking (Impressions, Clicks, Conversions, Engagement Rate).
