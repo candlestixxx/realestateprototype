@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - State Migration & Cleanup
+### Changed
+- **App.tsx State Refactor**: Migrated `currentUser`, `selectedBusinessType`, and `isDarkMode` local states entirely into the newly built Global App Context.
+- **TopBar Prop Drilling**: Cleaned up the `<TopBar />` component by removing verbose prop-drilling, reading its authentication and layout dependencies directly from `useAppStore()`.
+
 ## [1.7.0] - Global State Reducers
 ### Added
 - **Global `appReducer`**: Created `src/store/reducer.ts` to implement the logic for managing core state transitions (`SET_USER`, `SET_BUSINESS_TYPE`, `TOGGLE_THEME`).

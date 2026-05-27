@@ -1,28 +1,25 @@
 import { Search, Briefcase, Moon, Sun, Sparkles, Bell, LogOut } from 'lucide-react';
 import { businessTypes, type BusinessTypeKey } from '../constants';
-import { type User } from '../types/api';
+import { useAppStore } from '../store/context';
+import { api } from '../services/api';
 
 interface TopBarProps {
-  selectedBusinessType: BusinessTypeKey;
-  setSelectedBusinessType: (type: BusinessTypeKey) => void;
-  isDarkMode: boolean;
-  setIsDarkMode: (isDark: boolean) => void;
   setShowInstructions: (show: boolean) => void;
   setNotification: (message: string) => void;
-  currentUser: User;
-  onLogout: () => void;
 }
 
 export const TopBar = ({
-  selectedBusinessType,
-  setSelectedBusinessType,
-  isDarkMode,
-  setIsDarkMode,
   setShowInstructions,
-  setNotification,
-  currentUser,
-  onLogout
+  setNotification
 }: TopBarProps) => {
+  const { state, dispatch } = useAppStore();
+  const { businessType, theme, user } = state;
+  const isDarkMode = theme === 'dark';
+
+  const handleLogout = async () => {
+    await api.logout();
+    dispatch({ type: 'SET_USER', payload: null });
+  };
   return (
     <header className="top-bar">
       <div className="search-bar">
@@ -34,8 +31,8 @@ export const TopBar = ({
         <Briefcase size={16} className="business-icon" />
         <select
           className="business-select"
-          value={selectedBusinessType}
-          onChange={(e) => setSelectedBusinessType(e.target.value as BusinessTypeKey)}
+          value={businessType}
+          onChange={(e) => dispatch({ type: 'SET_BUSINESS_TYPE', payload: e.target.value as BusinessTypeKey })}
         >
           {Object.entries(businessTypes).map(([key, config]) => (
             <option key={key} value={key}>{config.label}</option>
@@ -46,7 +43,7 @@ export const TopBar = ({
       <div className="user-profile">
         <button
           className="theme-toggle-btn"
-          onClick={() => setIsDarkMode(!isDarkMode)}
+          onClick={() => dispatch({ type: 'TOGGLE_THEME' })}
           title="Toggle Dark Mode"
         >
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -61,12 +58,14 @@ export const TopBar = ({
         </button>
         <Bell size={20} />
 
-        <div className="avatar" title={currentUser.name}>
-          {currentUser.avatar}
-        </div>
+        {user && (
+          <div className="avatar" title={user.name}>
+            {user.avatar}
+          </div>
+        )}
         <button
           className="theme-toggle-btn"
-          onClick={onLogout}
+          onClick={handleLogout}
           title="Log out"
           style={{ marginLeft: '-0.5rem' }}
         >

@@ -15,7 +15,7 @@ import {
   Database
 } from 'lucide-react';
 import './App.css';
-import { businessTypes, type BusinessTypeKey } from './constants';
+import { businessTypes } from './constants';
 import { InstructionsModal } from './components/InstructionsModal';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
@@ -25,7 +25,6 @@ import { Analytics } from './components/Analytics';
 import { ContentLibrary } from './components/ContentLibrary';
 import { Settings } from './components/Settings';
 import { api } from './services/api';
-import { type User } from './types/api';
 import { useAppStore } from './store/context';
 
 // Types
@@ -42,12 +41,18 @@ export interface CalendarEvent {
 }
 
 function App() {
-  const { state } = useAppStore(); // Prepared for Phase 5 Global State refactoring
+  const { state, dispatch } = useAppStore();
+  const { businessType, theme, user } = state;
 
-  const [currentUser, setCurrentUser] = useState<User | null>(() => api.getCurrentUser());
+  // Initialize Auth state from Mock API on mount
+  useEffect(() => {
+    const cachedUser = api.getCurrentUser();
+    if (cachedUser && !user) {
+      dispatch({ type: 'SET_USER', payload: cachedUser });
+    }
+  }, [dispatch, user]);
 
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [selectedBusinessType, setSelectedBusinessType] = useState<BusinessTypeKey>(state.businessType);
   const [showInstructions, setShowInstructions] = useState(() => {
     return localStorage.getItem('hide_instructions') !== 'true';
   });
@@ -60,22 +65,20 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [draftEvents, setDraftEvents] = useState<CalendarEvent[]>([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [viewDate, setViewDate] = useState(new Date());
 
+  // Global Theme Side Effect
   useEffect(() => {
-    if (isDarkMode) {
+    if (theme === 'dark') {
       document.body.classList.add('dark-mode');
       localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
     }
-  }, [isDarkMode]);
+  }, [theme]);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [calendarView, setCalendarView] = useState<'month' | 'week'>('month');
   const [isDragging, setIsDragging] = useState(false);
@@ -159,10 +162,6 @@ function App() {
     setDraftEvents([]);
   };
 
-  const handleLogout = async () => {
-    await api.logout();
-    setCurrentUser(null);
-  };
 
   const handleCancelDrafts = () => {
     setShowReviewModal(false);
@@ -454,7 +453,7 @@ function App() {
       )}
 
       <div className="quick-tools-grid">
-        {businessTypes[selectedBusinessType].tools.map((tool, idx) => {
+        {businessTypes[businessType].tools.map((tool, idx) => {
           const IconComponent = { Database, Users, FileText }[tool.icon as 'Database' | 'Users' | 'FileText'] || Database;
           return (
             <button key={idx} className="quick-tool-btn" onClick={() => handleQuickTool(tool.title, tool.type as 'listing' | 'report' | 'social')}>
@@ -467,8 +466,8 @@ function App() {
     </section>
   );
 
-  if (!currentUser) {
-    return <Login onLoginSuccess={setCurrentUser} />;
+  if (!user) {
+    return <Login onLoginSuccess={(u) => dispatch({ type: 'SET_USER', payload: u })} />;
   }
 
   return (
@@ -505,14 +504,8 @@ function App() {
 
       <main className={`main-content ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         <TopBar
-          selectedBusinessType={selectedBusinessType}
-          setSelectedBusinessType={setSelectedBusinessType}
-          isDarkMode={isDarkMode}
-          setIsDarkMode={setIsDarkMode}
           setShowInstructions={setShowInstructions}
           setNotification={setNotification}
-          currentUser={currentUser}
-          onLogout={handleLogout}
         />
 
         {renderPlanningHeader()}
@@ -527,7 +520,7 @@ function App() {
               <div className="dashboard-content-layout">
                 <div className="dashboard-stats-column">
                   <div className="stats-grid" style={{marginBottom: '2rem'}}>
-                    {businessTypes[selectedBusinessType].stats.map((s, i) => (
+                    {businessTypes[businessType].stats.map((s, i) => (
                       <div key={i} className="stat-card">
                         <h4>{s.l}</h4>
                         <div className="value">{s.v}</div>
@@ -535,9 +528,9 @@ function App() {
                     ))}
                   </div>
                   <div className="dashboard-info-card">
-                    <h3>Quick Tips ({businessTypes[selectedBusinessType].label})</h3>
+                    <h3>Quick Tips ({businessTypes[businessType].label})</h3>
                     <ul>
-                      {businessTypes[selectedBusinessType].tips.map((tip, i) => (
+                      {businessTypes[businessType].tips.map((tip, i) => (
                         <li key={i}>{tip}</li>
                       ))}
                     </ul>
