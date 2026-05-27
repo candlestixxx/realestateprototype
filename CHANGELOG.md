@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - UI Safety & Notification Polish
+### Added
+- **Destructive Action Safety**: Implemented a `window.confirm` dialogue on the "Clear Content" button to prevent accidental event loss.
+- **Dismissible Notifications**: Added an interactive "X" close button to the notification toast, allowing users to manually dismiss alerts.
+
 ## [0.4.0] - Component De-coupling & Clean Up
 ### Changed
 - Removed deprecated Legacy Tour logic and guided overlays, preventing state conflicts with the new Instructions Modal.

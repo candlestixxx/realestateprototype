@@ -1,6 +1,13 @@
 # Granular Tasks and Immediate Bug Fixes
 
+## Pending Architecture & Integration (Phase 2 & 3)
+*   [ ] Connect the front-end to a live OpenAI/Claude endpoint for actual dynamic post generation.
+*   [ ] Establish secure user authentication and profile management.
+*   [ ] Integrate OAuth 2.0 flows for major social media platforms.
+
 ## UI/UX Enhancements
+*   [x] Implement confirmation dialogue before executing destructive actions like clearing calendar events.
+*   [x] Add manual dismiss functionality to the notification toast overlay.
 *   [x] Extract the `InstructionsModal` into its own component file to declutter `App.tsx`.
 *   [x] Enhance the calendar drag-and-drop capability. Currently, selecting multiple dates is click-based; implement a click-and-drag bounding box.
 *   [x] Add a dark mode toggle and implement CSS variables for a true dark theme.

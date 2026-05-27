@@ -436,7 +436,10 @@ function App() {
       />
       {notification && (
         <div className="notification-toast">
-          {notification}
+          <span>{notification}</span>
+          <button className="btn-close-toast" onClick={() => setNotification(null)}>
+            <X size={16} />
+          </button>
         </div>
       )}
 
@@ -507,10 +510,12 @@ function App() {
             <div className="view-calendar">
               <div className="calendar-actions-bar" style={{marginTop: '-1rem'}}>
                 <button className="action-btn danger" onClick={async () => {
-                  const updatedEvents = scheduledEvents.filter(e => e.month !== viewDate.getMonth());
-                  setScheduledEvents(updatedEvents);
-                  await api.saveEvents(updatedEvents);
-                  setNotification("Month cleared.");
+                  if (window.confirm("Are you sure you want to clear all content for this month? This action cannot be undone.")) {
+                    const updatedEvents = scheduledEvents.filter(e => e.month !== viewDate.getMonth());
+                    setScheduledEvents(updatedEvents);
+                    await api.saveEvents(updatedEvents);
+                    setNotification("Month cleared.");
+                  }
                 }}>
                   <Trash2 size={16} /> Clear Content
                 </button>
