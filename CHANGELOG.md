@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - Component De-coupling & Clean Up
+### Changed
+- Removed deprecated Legacy Tour logic and guided overlays, preventing state conflicts with the new Instructions Modal.
+- Aggressively refactored `App.tsx` by extracting the `<Sidebar />` and `<TopBar />` components into the `src/components/` directory, satisfying Phase 4 Roadmap goals.
+
 ## [0.3.0] - Mock API & Data Plumbing
 ### Added
 - **Mock API Service**: Created `src/services/api.ts` to wrap localStorage with simulated network latency, acting as a mock database.

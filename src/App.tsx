@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
-  LayoutDashboard, 
-  Library,
   X,
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -11,19 +9,16 @@ import {
   Maximize2,
   Minimize2,
   CheckCircle2,
-  Bell,
-  Search,
   Upload,
   Sparkles,
   Users,
-  Database,
-  Briefcase,
-  Moon,
-  Sun
+  Database
 } from 'lucide-react';
 import './App.css';
 import { businessTypes, type BusinessTypeKey } from './constants';
 import { InstructionsModal } from './components/InstructionsModal';
+import { Sidebar } from './components/Sidebar';
+import { TopBar } from './components/TopBar';
 import { api } from './services/api';
 
 // Types
@@ -81,46 +76,6 @@ function App() {
   }, []);
 
   const [isLoadingData, setIsLoadingData] = useState(true);
-
-  const [tourStep, setTourStep] = useState<number | null>(() => {
-    return localStorage.getItem('legacy_tour_completed') === 'true' ? null : 0;
-  });
-
-  const tourGuides = [
-    {
-      title: "👋 Welcome to Command Center",
-      content: "This is your authority footprint. Start by checking your **Reach** and **MLS Sync** stats to see how your brand is performing today.",
-      target: "stats-grid"
-    },
-    {
-      title: "📅 Your Interactive Calendar",
-      content: "This isn't just a view—it's a tool. **Click a single day** to focus your planning, or **click multiple days** to prepare a week's worth of content at once.",
-      target: "mini-calendar"
-    },
-    {
-      title: "✨ AI Strategy Input",
-      content: "Once you've selected your dates, type a topic here. Our AI will combine your brand voice with local market data to generate optimized posts.",
-      target: "ai-input-wrapper"
-    },
-    {
-      title: "🚀 The Power Combination",
-      content: "Try this: Select **3 future days**, type 'Market Update', and hit **Bulk Schedule**. You've just automated half your week in 10 seconds!",
-      target: "btn-generate-green"
-    }
-  ];
-
-  const nextTourStep = () => {
-    if (tourStep !== null && tourStep < tourGuides.length - 1) {
-      setTourStep(tourStep + 1);
-    } else {
-      completeTour();
-    }
-  };
-
-  const completeTour = () => {
-    localStorage.setItem('legacy_tour_completed', 'true');
-    setTourStep(null);
-  };
   
   const [scheduledEvents, setScheduledEvents] = useState<CalendarEvent[]>([]);
 
@@ -393,22 +348,6 @@ function App() {
 
   const renderPlanningHeader = () => (
     <section className="planning-section">
-      {tourStep !== null && (
-        <div className={`tour-guide-overlay step-${tourStep}`}>
-          <div className="tour-guide-card">
-            <div className="tour-badge">{tourStep + 1} of {tourGuides.length}</div>
-            <h3>{tourGuides[tourStep].title}</h3>
-            <p dangerouslySetInnerHTML={{ __html: tourGuides[tourStep].content }}></p>
-            <div className="tour-footer">
-              <button className="btn btn-link" onClick={completeTour}>Skip Tour</button>
-              <button className="btn btn-primary-gold" onClick={nextTourStep}>
-                {tourStep === tourGuides.length - 1 ? "Start Planning!" : "Next Step"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="planning-header-text">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
@@ -501,58 +440,22 @@ function App() {
         </div>
       )}
 
-      <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-        <button className="sidebar-collapse-btn" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
-          {isSidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-        </button>
-        <div className="sidebar-logo">{isSidebarCollapsed ? <span>L1</span> : <>LEGACY<span>ONE</span></>}</div>
-        <nav className="nav-menu">
-          <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}><LayoutDashboard size={20} />{!isSidebarCollapsed && <span>Dashboard</span>}</div>
-          <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}><CalendarIcon size={20} />{!isSidebarCollapsed && <span>Content Calendar</span>}</div>
-          <div className={`nav-item ${activeTab === 'library' ? 'active' : ''}`} onClick={() => setActiveTab('library')}><Library size={20} />{!isSidebarCollapsed && <span>Content Library</span>}</div>
-        </nav>
-        <div className="sidebar-footer">
-          <div className="plan-badge">LEGACY PRO</div>
-        </div>
-      </aside>
+      <Sidebar
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
       <main className={`main-content ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-        <header className="top-bar">
-          <div className="search-bar"><Search size={16} /><input type="text" placeholder="Search strategy..." /></div>
-
-          <div className="business-selector">
-            <Briefcase size={16} className="business-icon" />
-            <select
-              className="business-select"
-              value={selectedBusinessType}
-              onChange={(e) => setSelectedBusinessType(e.target.value as BusinessTypeKey)}
-            >
-              {Object.entries(businessTypes).map(([key, config]) => (
-                <option key={key} value={key}>{config.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="user-profile" style={{ gap: '1rem' }}>
-            <button
-              className="theme-toggle-btn"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              title="Toggle Dark Mode"
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-            <button 
-              className="help-btn" 
-              onClick={() => { setShowInstructions(true); setNotification("Showing instructions..."); }}
-              title="Show Instructions"
-            >
-              <Sparkles size={18} />
-              <span>Help</span>
-            </button>
-            <Bell size={20} />
-            <div className="avatar">JD</div>
-          </div>
-        </header>
+        <TopBar
+          selectedBusinessType={selectedBusinessType}
+          setSelectedBusinessType={setSelectedBusinessType}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+          setShowInstructions={setShowInstructions}
+          setNotification={setNotification}
+        />
 
         {renderPlanningHeader()}
 
