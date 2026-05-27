@@ -68,6 +68,17 @@ function App() {
   }, [isDarkMode]);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [calendarView, setCalendarView] = useState<'month' | 'week'>('month');
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragMode, setDragMode] = useState<'select' | 'deselect'>('select');
+
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+  }, []);
+
   const [tourStep, setTourStep] = useState<number | null>(() => {
     return localStorage.getItem('legacy_tour_completed') === 'true' ? null : 0;
   });
@@ -175,19 +186,43 @@ function App() {
     setSelectedDates([]);
   };
 
-  const toggleDateSelection = (date: Date) => {
+  const isDateSelected = (date: Date) => {
+    return !!selectedDates.find(d =>
+      d.getDate() === date.getDate() &&
+      d.getMonth() === date.getMonth() &&
+      d.getFullYear() === date.getFullYear()
+    );
+  };
+
+  const setDateSelectedState = (date: Date, selected: boolean) => {
     setSelectedDates(prev => {
       const exists = prev.find(d => 
         d.getDate() === date.getDate() && 
         d.getMonth() === date.getMonth() && 
         d.getFullYear() === date.getFullYear()
       );
-      if (exists) {
-        return prev.filter(d => d !== exists);
-      } else {
+
+      if (selected && !exists) {
         return [...prev, date];
+      } else if (!selected && exists) {
+        return prev.filter(d => d !== exists);
       }
+      return prev;
     });
+  };
+
+  const handleMouseDownOnDate = (date: Date) => {
+    setIsDragging(true);
+    const currentlySelected = isDateSelected(date);
+    const newMode = currentlySelected ? 'deselect' : 'select';
+    setDragMode(newMode);
+    setDateSelectedState(date, newMode === 'select');
+  };
+
+  const handleMouseEnterOnDate = (date: Date) => {
+    if (isDragging) {
+      setDateSelectedState(date, dragMode === 'select');
+    }
   };
 
   const handleCloseInstructions = () => {
@@ -242,7 +277,10 @@ function App() {
                 <div className="calendar-day-head">{day} {date.getDate()}</div>
                 <div 
                   className={`calendar-day week-day ${isSelected ? 'selected' : ''}`}
-                  onClick={() => toggleDateSelection(new Date(date))}
+                  onMouseDown={() => handleMouseDownOnDate(new Date(date))}
+                  onMouseEnter={() => handleMouseEnterOnDate(new Date(date))}
+                  onClick={() => {}}
+                  style={{ userSelect: 'none' }}
                 >
                   <div className="day-events-container">
                     {events.map((e, ei) => (
@@ -285,7 +323,10 @@ function App() {
             <div 
               key={i} 
               className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isCompressed ? 'compressed' : ''} ${isSelected ? 'selected' : ''}`}
-              onClick={() => isCurrentMonth && toggleDateSelection(date)}
+              onMouseDown={() => isCurrentMonth && handleMouseDownOnDate(date)}
+              onMouseEnter={() => isCurrentMonth && handleMouseEnterOnDate(date)}
+              onClick={() => {}}
+              style={{ userSelect: 'none' }}
             >
               {isCurrentMonth && (
                 <>
@@ -447,11 +488,7 @@ function App() {
         handleCloseInstructions={handleCloseInstructions}
       />
       {notification && (
-        <div style={{
-          position: 'fixed', top: '20px', right: '20px', background: '#0A192F', color: 'white',
-          padding: '1rem 2rem', borderRadius: '8px', zIndex: 10000, boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-          borderLeft: '4px solid #C5A059', animation: 'slideIn 0.3s ease-out'
-        }}>
+        <div className="notification-toast">
           {notification}
         </div>
       )}

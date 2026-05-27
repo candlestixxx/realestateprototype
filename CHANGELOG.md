@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - UI Enhancement & Backend Prep
+### Added
+- **Dark Mode**: Implemented full CSS variable tokenization for a complete Dark Mode theme toggled via the top bar and persisted in `localStorage`.
+- **Drag-to-Select Calendar**: Upgraded the calendar interface to allow seamless drag selection and deselection of dates without individual clicks.
+- **Loading States**: Introduced a simulated 2-second timeout and spinner UI during AI Generation to mimic realistic API calls.
+- **API Types**: Created `AIGenerationRequest` and `AIGenerationResponse` TypeScript interfaces.
+
+### Changed
+- Abstracted the notification toast inline styles to `App.css` to fix animation glitching.
+- Separated components and constants out of `App.tsx` into modular files (`constants.ts`, `InstructionsModal.tsx`).
+
 ## [0.1.0] - Initial Universal Pivot
 ### Added
 - **Universal Business Sector Logic**: Introduced dynamic UI rendering based on the selected business type (Real Estate, E-Commerce, Restaurant, General).
