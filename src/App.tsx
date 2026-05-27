@@ -19,6 +19,7 @@ import { businessTypes, type BusinessTypeKey } from './constants';
 import { InstructionsModal } from './components/InstructionsModal';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
+import { ReviewModal } from './components/ReviewModal';
 import { api } from './services/api';
 
 // Types
@@ -30,6 +31,7 @@ export interface CalendarEvent {
   time: string;
   title: string;
   type: 'listing' | 'report' | 'social';
+  content?: string;
   approved?: boolean;
 }
 
@@ -46,6 +48,8 @@ function App() {
   const [aiSearchTopic, setAiSearchTopic] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [draftEvents, setDraftEvents] = useState<CalendarEvent[]>([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
   });
@@ -108,25 +112,47 @@ function App() {
     // Simulate API Delay
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const newEvents: CalendarEvent[] = targetDates.map(date => ({
-      id: Math.random().toString(36).substr(2, 9),
-      day: date.getDate(),
-      month: date.getMonth(),
-      year: date.getFullYear(),
-      time: "09:00 AM",
-      title: `AI: ${aiSearchTopic}`,
-      type: 'social'
-    }));
+    const newEvents: CalendarEvent[] = targetDates.map(date => {
+      const concepts = [
+        `Here is an insightful update regarding ${aiSearchTopic}. The market is showing strong positive indicators this quarter.`,
+        `Don't miss out on this week's highlights! We're focusing heavily on ${aiSearchTopic} to drive engagement.`,
+        `Did you know? Our latest data on ${aiSearchTopic} reveals a 20% increase in user interaction.`
+      ];
 
-    const updatedEvents = [...scheduledEvents, ...newEvents];
+      return {
+        id: Math.random().toString(36).substr(2, 9),
+        day: date.getDate(),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+        time: "09:00 AM",
+        title: `AI: ${aiSearchTopic}`,
+        type: 'social',
+        content: concepts[Math.floor(Math.random() * concepts.length)]
+      };
+    });
+
+    setDraftEvents(newEvents);
+    setShowReviewModal(true);
+    setIsGenerating(false);
+  };
+
+  const handleApproveDrafts = async () => {
+    const updatedEvents = [...scheduledEvents, ...draftEvents];
     setScheduledEvents(updatedEvents);
     await api.saveEvents(updatedEvents);
 
     setAiSearchTopic('');
     setAttachments([]);
-    setNotification(`AI scheduled for ${targetDates.length} day(s).`);
+    setNotification(`Successfully scheduled ${draftEvents.length} new post(s).`);
     setSelectedDates([]);
-    setIsGenerating(false);
+    setShowReviewModal(false);
+    setDraftEvents([]);
+  };
+
+  const handleCancelDrafts = () => {
+    setShowReviewModal(false);
+    setDraftEvents([]);
+    setNotification("Drafts discarded.");
   };
 
   const handleQuickTool = async (title: string, type: 'listing' | 'report' | 'social') => {
@@ -428,6 +454,14 @@ function App() {
 
   return (
     <div className="dashboard-layout">
+      {showReviewModal && (
+        <ReviewModal
+          draftEvents={draftEvents}
+          setDraftEvents={setDraftEvents}
+          onApprove={handleApproveDrafts}
+          onCancel={handleCancelDrafts}
+        />
+      )}
       <InstructionsModal
         showInstructions={showInstructions}
         dontShowAgain={dontShowAgain}

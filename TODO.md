@@ -19,3 +19,4 @@
 ## Backend Integration Preparation
 *   [x] Draft the TypeScript interfaces for the API payloads expected during "AI Generation".
 *   [x] Implement a loading state spinner while the app simulates API generation delays.
+*   [x] Build a Draft Review UI layer intercepting AI generation before calendar placement.

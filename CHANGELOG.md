@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - AI Draft Review System
+### Added
+- **Content Review Modal**: Intercepts AI content generation, presenting the user with editable drafts.
+- **Draft Event Content**: Updated `CalendarEvent` to optionally hold simulated AI post copy.
+- **Discard/Approve Flow**: Added approval loop preventing unverified posts from hitting the global schedule.
+
 ## [0.5.0] - UI Safety & Notification Polish
 ### Added
 - **Destructive Action Safety**: Implemented a `window.confirm` dialogue on the "Clear Content" button to prevent accidental event loss.

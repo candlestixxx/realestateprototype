@@ -21,6 +21,7 @@ export interface AIGenerationResponse {
     time: string;
     title: string;
     type: 'listing' | 'report' | 'social';
+    content?: string;
     approved: boolean;
   }[];
   error?: string;

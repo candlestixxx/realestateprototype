@@ -465,15 +465,18 @@ body {
   animation: fadeIn 0.3s ease-out;
 }
 
-.modal-content.instructions-modal {
+.modal-content {
   background: var(--bg-surface);
   width: 90%;
-  max-width: 600px;
   border-radius: 20px;
   box-shadow: 0 25px 50px rgba(0,0,0,0.25);
   border: 1px solid var(--accent);
   overflow: hidden;
   animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-content.instructions-modal {
+  max-width: 600px;
 }
 
 .modal-header {
@@ -536,6 +539,97 @@ body {
   color: var(--accent);
   display: block;
   margin-bottom: 0.25rem;
+}
+
+/* Review Modal Specifics */
+.modal-content.review-modal {
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-body {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.review-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.review-subtitle strong {
+  color: var(--text-dark);
+}
+
+.draft-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.draft-card {
+  background: var(--bg-surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.draft-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.draft-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+
+.draft-badge.listing { background: #DBEAFE; color: #1E40AF; }
+.draft-badge.report { background: #FEF3C7; color: #92400E; }
+.draft-badge.social { background: #D1FAE5; color: #065F46; }
+
+.draft-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.draft-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.draft-content-input {
+  width: 100%;
+  background: var(--bg-surface);
+  color: var(--text-dark);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s;
+}
+
+.draft-content-input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .modal-footer {
