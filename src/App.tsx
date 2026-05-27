@@ -17,7 +17,9 @@ import {
   Sparkles,
   Users,
   Database,
-  Briefcase
+  Briefcase,
+  Moon,
+  Sun
 } from 'lucide-react';
 import './App.css';
 import { businessTypes, type BusinessTypeKey } from './constants';
@@ -47,9 +49,23 @@ function App() {
   const [isCompressed, setIsCompressed] = useState(false);
   const [aiSearchTopic, setAiSearchTopic] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [viewDate, setViewDate] = useState(new Date());
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [calendarView, setCalendarView] = useState<'month' | 'week'>('month');
   const [tourStep, setTourStep] = useState<number | null>(() => {
@@ -112,13 +128,18 @@ function App() {
     }
   }, [notification]);
 
-  const handleAiGenerate = () => {
+  const handleAiGenerate = async () => {
     if (!aiSearchTopic) {
       setNotification("Please enter a topic for your content.");
       return;
     }
     
+    setIsGenerating(true);
     const targetDates = selectedDates.length > 0 ? selectedDates : [new Date()];
+
+    // Simulate API Delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     const newEvents: CalendarEvent[] = targetDates.map(date => ({
       id: Math.random().toString(36).substr(2, 9),
       day: date.getDate(),
@@ -134,6 +155,7 @@ function App() {
     setAttachments([]);
     setNotification(`AI scheduled for ${targetDates.length} day(s).`);
     setSelectedDates([]);
+    setIsGenerating(false);
   };
 
   const handleQuickTool = (title: string, type: 'listing' | 'report' | 'social') => {
@@ -379,8 +401,12 @@ function App() {
           <Upload size={18} />
           {attachments.length > 0 ? `${attachments.length} Attached` : 'Add attachment'}
         </button>
-        <button className="btn-generate-green" onClick={handleAiGenerate}>
-          {selectedDates.length > 0 ? 'Bulk Schedule' : 'Generate'}
+        <button
+          className={`btn-generate-green ${isGenerating ? 'loading' : ''}`}
+          onClick={handleAiGenerate}
+          disabled={isGenerating}
+        >
+          {isGenerating ? 'Generating...' : (selectedDates.length > 0 ? 'Bulk Schedule' : 'Generate')}
         </button>
       </div>
 
@@ -463,6 +489,13 @@ function App() {
           </div>
 
           <div className="user-profile" style={{ gap: '1rem' }}>
+            <button
+              className="theme-toggle-btn"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              title="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <button 
               className="help-btn" 
               onClick={() => { setShowInstructions(true); setNotification("Showing instructions..."); }}
