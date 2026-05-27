@@ -1,18 +1,42 @@
-import { useState } from 'react';
-import { Share2, Globe, Link as LinkIcon, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Share2, Globe, Link as LinkIcon, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { oauthService, type SocialPlatform, type OAuthConnectionState } from '../services/oauth';
 
-export const Settings = () => {
-  const [connections, setConnections] = useState({
-    facebook: true,
+interface SettingsProps {
+  setNotification: (msg: string | null) => void;
+}
+
+export const Settings = ({ setNotification }: SettingsProps) => {
+  const [connections, setConnections] = useState<OAuthConnectionState>({
+    facebook: false,
     instagram: false,
-    linkedin: true,
+    linkedin: false,
     twitter: false
   });
+  const [loadingPlatform, setLoadingPlatform] = useState<SocialPlatform | null>(null);
 
-  const toggleConnection = (platform: keyof typeof connections) => {
-    // In a real app, this would trigger an OAuth popup flow.
-    // For this mock, we just toggle the boolean state.
-    setConnections(prev => ({ ...prev, [platform]: !prev[platform] }));
+  useEffect(() => {
+    setConnections(oauthService.getConnections());
+  }, []);
+
+  const toggleConnection = async (platform: SocialPlatform) => {
+    setLoadingPlatform(platform);
+
+    try {
+      if (connections[platform]) {
+        await oauthService.disconnectPlatform(platform);
+        setConnections(prev => ({ ...prev, [platform]: false }));
+        setNotification(`Disconnected from ${platform}.`);
+      } else {
+        await oauthService.connectPlatform(platform);
+        setConnections(prev => ({ ...prev, [platform]: true }));
+        setNotification(`Successfully connected to ${platform}!`);
+      }
+    } catch {
+      setNotification(`Failed to modify connection to ${platform}.`);
+    } finally {
+      setLoadingPlatform(null);
+    }
   };
 
   return (
@@ -38,9 +62,10 @@ export const Settings = () => {
           <button
             className={`btn ${connections.facebook ? 'btn-outline' : 'btn-primary-gold'}`}
             onClick={() => toggleConnection('facebook')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', borderRadius: '8px', border: connections.facebook ? '1px solid var(--border)' : 'none', background: connections.facebook ? 'transparent' : 'var(--accent)', color: connections.facebook ? 'var(--text-dark)' : 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
+            disabled={loadingPlatform === 'facebook'}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', borderRadius: '8px', border: connections.facebook ? '1px solid var(--border)' : 'none', background: connections.facebook ? 'transparent' : 'var(--accent)', color: connections.facebook ? 'var(--text-dark)' : 'var(--primary)', cursor: loadingPlatform === 'facebook' ? 'wait' : 'pointer', fontWeight: 600, opacity: loadingPlatform === 'facebook' ? 0.7 : 1 }}
           >
-            {connections.facebook ? <><CheckCircle2 size={16} color="var(--success)" /> Connected</> : <><LinkIcon size={16} /> Connect</>}
+            {loadingPlatform === 'facebook' ? <Loader2 size={16} className="animate-spin" /> : connections.facebook ? <><CheckCircle2 size={16} color="var(--success)" /> Connected</> : <><LinkIcon size={16} /> Connect</>}
           </button>
         </div>
 
@@ -58,9 +83,10 @@ export const Settings = () => {
           <button
             className={`btn ${connections.instagram ? 'btn-outline' : 'btn-primary-gold'}`}
             onClick={() => toggleConnection('instagram')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', borderRadius: '8px', border: connections.instagram ? '1px solid var(--border)' : 'none', background: connections.instagram ? 'transparent' : 'var(--accent)', color: connections.instagram ? 'var(--text-dark)' : 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
+            disabled={loadingPlatform === 'instagram'}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', borderRadius: '8px', border: connections.instagram ? '1px solid var(--border)' : 'none', background: connections.instagram ? 'transparent' : 'var(--accent)', color: connections.instagram ? 'var(--text-dark)' : 'var(--primary)', cursor: loadingPlatform === 'instagram' ? 'wait' : 'pointer', fontWeight: 600, opacity: loadingPlatform === 'instagram' ? 0.7 : 1 }}
           >
-            {connections.instagram ? <><CheckCircle2 size={16} color="var(--success)" /> Connected</> : <><LinkIcon size={16} /> Connect</>}
+            {loadingPlatform === 'instagram' ? <Loader2 size={16} className="animate-spin" /> : connections.instagram ? <><CheckCircle2 size={16} color="var(--success)" /> Connected</> : <><LinkIcon size={16} /> Connect</>}
           </button>
         </div>
 
@@ -78,9 +104,10 @@ export const Settings = () => {
           <button
             className={`btn ${connections.linkedin ? 'btn-outline' : 'btn-primary-gold'}`}
             onClick={() => toggleConnection('linkedin')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', borderRadius: '8px', border: connections.linkedin ? '1px solid var(--border)' : 'none', background: connections.linkedin ? 'transparent' : 'var(--accent)', color: connections.linkedin ? 'var(--text-dark)' : 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
+            disabled={loadingPlatform === 'linkedin'}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', borderRadius: '8px', border: connections.linkedin ? '1px solid var(--border)' : 'none', background: connections.linkedin ? 'transparent' : 'var(--accent)', color: connections.linkedin ? 'var(--text-dark)' : 'var(--primary)', cursor: loadingPlatform === 'linkedin' ? 'wait' : 'pointer', fontWeight: 600, opacity: loadingPlatform === 'linkedin' ? 0.7 : 1 }}
           >
-            {connections.linkedin ? <><CheckCircle2 size={16} color="var(--success)" /> Connected</> : <><LinkIcon size={16} /> Connect</>}
+            {loadingPlatform === 'linkedin' ? <Loader2 size={16} className="animate-spin" /> : connections.linkedin ? <><CheckCircle2 size={16} color="var(--success)" /> Connected</> : <><LinkIcon size={16} /> Connect</>}
           </button>
         </div>
 

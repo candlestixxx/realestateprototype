@@ -302,19 +302,21 @@ function App() {
           setNotification={setNotification}
         />
 
-        <PlanningHeader
-          selectedDates={selectedDates}
-          setSelectedDates={setSelectedDates}
-          aiSearchTopic={aiSearchTopic}
-          setAiSearchTopic={setAiSearchTopic}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          isGenerating={isGenerating}
-          handleAiGenerate={handleAiGenerate}
-          handleQuickTool={handleQuickTool}
-        />
+        <div className="page-container" style={{paddingTop: '2rem'}}>
+          {(activeTab === 'dashboard' || activeTab === 'calendar') && (
+            <PlanningHeader
+              selectedDates={selectedDates}
+              setSelectedDates={setSelectedDates}
+              aiSearchTopic={aiSearchTopic}
+              setAiSearchTopic={setAiSearchTopic}
+              attachments={attachments}
+              setAttachments={setAttachments}
+              isGenerating={isGenerating}
+              handleAiGenerate={handleAiGenerate}
+              handleQuickTool={handleQuickTool}
+            />
+          )}
 
-        <div className="page-container" style={{paddingTop: 0}}>
           {activeTab === 'dashboard' && (
             <Dashboard
               isLoadingData={isLoadingData}
@@ -381,7 +383,7 @@ function App() {
 
           {activeTab === 'analytics' && <Analytics />}
 
-          {activeTab === 'settings' && <Settings />}
+          {activeTab === 'settings' && <Settings setNotification={setNotification} />}
         </div>
       </main>
 

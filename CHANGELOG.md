@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - OAuth Service Shell & CI/CD Pipeline
+### Added
+- **Mock OAuth Service**: Implemented `src/services/oauth/index.ts` to simulate asynchronous token handshakes and store connection states securely in `localStorage`.
+- **Settings UI Polish**: Upgraded the `Settings.tsx` components to interact with the new OAuth service. Buttons now display loading spinners (`Loader2` from Lucide) during connection handshakes and trigger global success/error notifications upon completion.
+- **Continuous Integration**: Established a GitHub Actions pipeline (`.github/workflows/ci.yml`) to automatically enforce linting, building, and Vitest test suite execution on all branch pushes and PRs.
+
 ## [1.13.0] - Live AI Content Generation Integration
 ### Added
 - **OpenAI API Service**: Created `src/services/openai/index.ts` to connect directly to the OpenAI API for actual, dynamic text generation instead of hardcoded mock timeouts.
