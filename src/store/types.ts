@@ -13,4 +13,7 @@ export const defaultState: AppState = {
   theme: 'light'
 };
 
-export type Action = { type: 'NO_OP' };
+export type Action =
+  | { type: 'SET_USER'; payload: User | null }
+  | { type: 'SET_BUSINESS_TYPE'; payload: BusinessTypeKey }
+  | { type: 'TOGGLE_THEME' };

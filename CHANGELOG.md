@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - Global State Reducers
+### Added
+- **Global `appReducer`**: Created `src/store/reducer.ts` to implement the logic for managing core state transitions (`SET_USER`, `SET_BUSINESS_TYPE`, `TOGGLE_THEME`).
+- **Context Initialization**: Initialized the `useReducer` hook inside `AppProvider.tsx`, wiring the state engine to the React component tree.
+
 ## [1.6.0] - React Context Global Shells
 ### Added
 - **Global `AppProvider`**: Integrated the global state shell natively into `src/main.tsx` providing context access via the `useAppStore` hook to the entire component tree.
