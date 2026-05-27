@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0] - Phase 3 Analytics Preview
+### Added
+- **Analytics Dashboard**: Created `Analytics.tsx` providing a UI layout for campaign tracking (Impressions, Clicks, Conversions, Engagement Rate).
+- **Sidebar Integration**: Added a dedicated `Analytics` tab to the primary sidebar navigation.
+- **Mock Metrics API**: Extended `src/services/api.ts` with `getAnalyticsData()` to simulate fetching performance metrics.
+
 ## [0.7.0] - Authentication Flow Mock
 ### Added
 - **Mock Login Service**: Added `login` and `logout` actions to `api.ts` with delayed simulated networking.

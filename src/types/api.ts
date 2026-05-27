@@ -33,3 +33,12 @@ export interface AIGenerationResponse {
   }[];
   error?: string;
 }
+
+/**
+ * Mocks the structure of aggregate engagement metrics for Phase 3.
+ */
+export interface AnalyticsData {
+  impressions: number;
+  clicks: number;
+  conversions: number;
+}

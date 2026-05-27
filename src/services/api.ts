@@ -1,5 +1,5 @@
 import { type CalendarEvent } from '../App';
-import { type User } from '../types/api';
+import { type User, type AnalyticsData } from '../types/api';
 
 const STORAGE_KEY = 'legacy_calendar_events';
 const AUTH_KEY = 'legacy_auth_user';
@@ -80,5 +80,17 @@ export const api = {
       }
     }
     return null;
+  },
+
+  /**
+   * Mocks returning aggregate engagement metrics for Phase 3 dashboard.
+   */
+  getAnalyticsData: async (): Promise<AnalyticsData> => {
+    await delay(MOCK_DELAY_MS);
+    return {
+      impressions: 124500,
+      clicks: 18320,
+      conversions: 450
+    };
   }
 };

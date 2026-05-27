@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, LayoutDashboard, Calendar as CalendarIcon, Library } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Calendar as CalendarIcon, Library, BarChart2 } from 'lucide-react';
 
 interface SidebarProps {
   isSidebarCollapsed: boolean;
@@ -28,6 +28,9 @@ export const Sidebar = ({
         </div>
         <div className={`nav-item ${activeTab === 'library' ? 'active' : ''}`} onClick={() => setActiveTab('library')}>
           <Library size={20} />{!isSidebarCollapsed && <span>Content Library</span>}
+        </div>
+        <div className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
+          <BarChart2 size={20} />{!isSidebarCollapsed && <span>Analytics</span>}
         </div>
       </nav>
       <div className="sidebar-footer">
