@@ -1,7 +1,7 @@
 # Granular Tasks and Immediate Bug Fixes
 
 ## Pending Architecture & Integration (Phase 2 & 3)
-*   [ ] Connect the front-end to a live OpenAI/Claude endpoint for actual dynamic post generation.
+*   [x] Connect the front-end to a live OpenAI/Claude endpoint for actual dynamic post generation.
 *   [x] Establish secure user authentication and profile management (Implemented mock UX flow).
 *   [x] Integrate OAuth 2.0 flows for major social media platforms (Implemented mock UX settings).
 

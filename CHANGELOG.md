@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - Live AI Content Generation Integration
+### Added
+- **OpenAI API Service**: Created `src/services/openai/index.ts` to connect directly to the OpenAI API for actual, dynamic text generation instead of hardcoded mock timeouts.
+- **Dynamic Prompting**: The system now dynamically structures a prompt based on the user's selected business type, input topic, and number of requested calendar dates, returning exactly the right amount of JSON-structured draft events.
+
 ## [1.12.0] - Automated Publishing Engine Shell
 ### Added
 - **Mock Background Worker**: Implemented a `setInterval` worker inside `App.tsx` that simulates background processing. It automatically polls `scheduledEvents` every 10 seconds and transitions posts from "scheduled" to "published" once their simulated timestamp matches the current time.

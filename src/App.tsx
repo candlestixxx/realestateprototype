@@ -20,6 +20,7 @@ import { Dashboard } from './components/Dashboard';
 import { Calendar } from './components/Calendar';
 import { api } from './services/api';
 import { useAppStore } from './store/context';
+import { generateAIContent } from './services/openai';
 
 // Types
 export interface CalendarEvent {
@@ -144,32 +145,32 @@ function App() {
     setIsGenerating(true);
     const targetDates = selectedDates.length > 0 ? selectedDates : [new Date()];
 
-    // Simulate API Delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await generateAIContent({
+        topic: aiSearchTopic,
+        businessType: state.businessType,
+        targetDates: targetDates.map(d => d.toISOString()),
+        attachmentsCount: 0
+      });
 
-    const newEvents: CalendarEvent[] = targetDates.map(date => {
-      const concepts = [
-        `Here is an insightful update regarding ${aiSearchTopic}. The market is showing strong positive indicators this quarter.`,
-        `Don't miss out on this week's highlights! We're focusing heavily on ${aiSearchTopic} to drive engagement.`,
-        `Did you know? Our latest data on ${aiSearchTopic} reveals a 20% increase in user interaction.`
-      ];
+      if (response.success && response.events) {
+        // Enhance events with status before sending to review
+        const enhancedEvents = response.events.map(event => ({
+          ...event,
+          status: 'scheduled' as const
+        }));
 
-      return {
-        id: Math.random().toString(36).substr(2, 9),
-        day: date.getDate(),
-        month: date.getMonth(),
-        year: date.getFullYear(),
-        time: "09:00 AM",
-        title: `AI: ${aiSearchTopic}`,
-        type: 'social',
-        content: concepts[Math.floor(Math.random() * concepts.length)],
-        status: 'scheduled'
-      };
-    });
-
-    setDraftEvents(newEvents);
-    setShowReviewModal(true);
-    setIsGenerating(false);
+        setDraftEvents(enhancedEvents);
+        setShowReviewModal(true);
+      } else {
+        setNotification(response.error || "Failed to generate AI content.");
+      }
+    } catch (error) {
+      console.error("AI Generation Error", error);
+      setNotification("An unexpected error occurred during AI generation.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleApproveDrafts = async () => {
