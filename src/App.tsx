@@ -20,7 +20,9 @@ import { InstructionsModal } from './components/InstructionsModal';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { ReviewModal } from './components/ReviewModal';
+import { Login } from './components/Login';
 import { api } from './services/api';
+import { type User } from './types/api';
 
 // Types
 export interface CalendarEvent {
@@ -36,6 +38,8 @@ export interface CalendarEvent {
 }
 
 function App() {
+  const [currentUser, setCurrentUser] = useState<User | null>(() => api.getCurrentUser());
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedBusinessType, setSelectedBusinessType] = useState<BusinessTypeKey>('real_estate');
   const [showInstructions, setShowInstructions] = useState(() => {
@@ -147,6 +151,11 @@ function App() {
     setSelectedDates([]);
     setShowReviewModal(false);
     setDraftEvents([]);
+  };
+
+  const handleLogout = async () => {
+    await api.logout();
+    setCurrentUser(null);
   };
 
   const handleCancelDrafts = () => {
@@ -452,6 +461,10 @@ function App() {
     </section>
   );
 
+  if (!currentUser) {
+    return <Login onLoginSuccess={setCurrentUser} />;
+  }
+
   return (
     <div className="dashboard-layout">
       {showReviewModal && (
@@ -492,6 +505,8 @@ function App() {
           setIsDarkMode={setIsDarkMode}
           setShowInstructions={setShowInstructions}
           setNotification={setNotification}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
 
         {renderPlanningHeader()}

@@ -11,6 +11,13 @@ export interface AIGenerationRequest {
 /**
  * Represents the structured data returned by the AI content generation service.
  */
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 export interface AIGenerationResponse {
   success: boolean;
   events: {

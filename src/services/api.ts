@@ -1,6 +1,8 @@
 import { type CalendarEvent } from '../App';
+import { type User } from '../types/api';
 
 const STORAGE_KEY = 'legacy_calendar_events';
+const AUTH_KEY = 'legacy_auth_user';
 const MOCK_DELAY_MS = 600;
 
 /**
@@ -40,5 +42,43 @@ export const api = {
     await delay(MOCK_DELAY_MS);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
     return true;
+  },
+
+  /**
+   * Mocks a login authentication request.
+   */
+  login: async (email: string): Promise<User> => {
+    await delay(1000); // Slightly longer delay for "auth"
+    const mockUser: User = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: email.split('@')[0] || 'Demo User',
+      email: email,
+      avatar: (email.split('@')[0] || 'D').substring(0, 2).toUpperCase()
+    };
+    localStorage.setItem(AUTH_KEY, JSON.stringify(mockUser));
+    return mockUser;
+  },
+
+  /**
+   * Mocks a logout authentication request.
+   */
+  logout: async (): Promise<void> => {
+    await delay(MOCK_DELAY_MS);
+    localStorage.removeItem(AUTH_KEY);
+  },
+
+  /**
+   * Retrieves the currently authenticated mock user from storage.
+   */
+  getCurrentUser: (): User | null => {
+    const saved = localStorage.getItem(AUTH_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+    return null;
   }
 };

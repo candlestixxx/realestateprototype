@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - Authentication Flow Mock
+### Added
+- **Mock Login Service**: Added `login` and `logout` actions to `api.ts` with delayed simulated networking.
+- **Login Screen UI**: Created a new isolated `Login.tsx` view with robust CSS styling and error handling states.
+- **Session State**: Wrapped `App.tsx` behind an `isAuthenticated` check tying back to local storage, and introduced a Logout feature into the Top Bar.
+
 ## [0.6.0] - AI Draft Review System
 ### Added
 - **Content Review Modal**: Intercepts AI content generation, presenting the user with editable drafts.

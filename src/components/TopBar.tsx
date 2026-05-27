@@ -1,5 +1,6 @@
-import { Search, Briefcase, Moon, Sun, Sparkles, Bell } from 'lucide-react';
+import { Search, Briefcase, Moon, Sun, Sparkles, Bell, LogOut } from 'lucide-react';
 import { businessTypes, type BusinessTypeKey } from '../constants';
+import { type User } from '../types/api';
 
 interface TopBarProps {
   selectedBusinessType: BusinessTypeKey;
@@ -8,6 +9,8 @@ interface TopBarProps {
   setIsDarkMode: (isDark: boolean) => void;
   setShowInstructions: (show: boolean) => void;
   setNotification: (message: string) => void;
+  currentUser: User;
+  onLogout: () => void;
 }
 
 export const TopBar = ({
@@ -16,7 +19,9 @@ export const TopBar = ({
   isDarkMode,
   setIsDarkMode,
   setShowInstructions,
-  setNotification
+  setNotification,
+  currentUser,
+  onLogout
 }: TopBarProps) => {
   return (
     <header className="top-bar">
@@ -55,7 +60,18 @@ export const TopBar = ({
           <span>Help</span>
         </button>
         <Bell size={20} />
-        <div className="avatar">JD</div>
+
+        <div className="avatar" title={currentUser.name}>
+          {currentUser.avatar}
+        </div>
+        <button
+          className="theme-toggle-btn"
+          onClick={onLogout}
+          title="Log out"
+          style={{ marginLeft: '-0.5rem' }}
+        >
+          <LogOut size={18} />
+        </button>
       </div>
     </header>
   );
