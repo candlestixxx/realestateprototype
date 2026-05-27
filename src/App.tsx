@@ -26,6 +26,7 @@ import { ContentLibrary } from './components/ContentLibrary';
 import { Settings } from './components/Settings';
 import { api } from './services/api';
 import { type User } from './types/api';
+import { useAppStore } from './store/context';
 
 // Types
 export interface CalendarEvent {
@@ -41,10 +42,12 @@ export interface CalendarEvent {
 }
 
 function App() {
+  const { state } = useAppStore(); // Prepared for Phase 5 Global State refactoring
+
   const [currentUser, setCurrentUser] = useState<User | null>(() => api.getCurrentUser());
 
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [selectedBusinessType, setSelectedBusinessType] = useState<BusinessTypeKey>('real_estate');
+  const [selectedBusinessType, setSelectedBusinessType] = useState<BusinessTypeKey>(state.businessType);
   const [showInstructions, setShowInstructions] = useState(() => {
     return localStorage.getItem('hide_instructions') !== 'true';
   });

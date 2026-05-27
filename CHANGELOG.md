@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - React Context Global Shells
+### Added
+- **Global `AppProvider`**: Integrated the global state shell natively into `src/main.tsx` providing context access via the `useAppStore` hook to the entire component tree.
+- **Analytics Testing**: Added `Analytics.test.tsx` utilizing `vi.mock` to confidently test both async network delay loading states and numeric metric formatting (e.g. Engagement Rate math).
+
 ## [1.5.0] - Architecture Prep & TopBar Tests
 ### Added
 - **Global State Shell**: Created `src/store/index.ts` to lay the groundwork for React Context, preparing the app to move away from prop-drilling in future refactors.
