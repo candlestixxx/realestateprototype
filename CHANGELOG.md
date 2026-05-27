@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - Unit Testing Infrastructure
+### Added
+- **Vitest & RTL Integration**: Configured `vitest`, `jsdom`, and `@testing-library/react` for robust component unit testing.
+- **TypeScript Test Tooling**: Added global test types to TS configurations to avoid import requirements.
+- **Login Component Tests**: Created an initial `Login.test.tsx` file demonstrating rendering and validation logic.
+
 ## [1.1.0] - OAuth Integration Settings Mockup
 ### Added
 - **Settings View**: Created `src/components/Settings.tsx` to handle OAuth platform toggling (Facebook, Instagram, LinkedIn).
