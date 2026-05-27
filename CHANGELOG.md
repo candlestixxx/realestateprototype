@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - Calendar & Dashboard Component Extraction
+### Added
+- **Core View Abstraction**: Extracted the final large UI chunks from `App.tsx` into `src/components/Calendar.tsx` and `src/components/Dashboard.tsx`.
+- **Expanded Test Coverage**: Authored `Calendar.test.tsx` and `Dashboard.test.tsx` to handle the grid generation and mock state interactions securely.
+
 ## [1.9.0] - Planning Header Component Extraction
 ### Added
 - **Planning Header**: Extracted the `PlanningHeader` logic and UI out of `App.tsx` into a dedicated component.

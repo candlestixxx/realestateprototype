@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
 import { 
   X,
-  ChevronLeft,
-  ChevronRight,
   Trash2,
   Maximize2,
   Minimize2,
   CheckCircle2
 } from 'lucide-react';
 import './App.css';
-import { businessTypes } from './constants';
 import { InstructionsModal } from './components/InstructionsModal';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
@@ -19,6 +16,8 @@ import { Analytics } from './components/Analytics';
 import { ContentLibrary } from './components/ContentLibrary';
 import { Settings } from './components/Settings';
 import { PlanningHeader } from './components/PlanningHeader';
+import { Dashboard } from './components/Dashboard';
+import { Calendar } from './components/Calendar';
 import { api } from './services/api';
 import { useAppStore } from './store/context';
 
@@ -37,7 +36,7 @@ export interface CalendarEvent {
 
 function App() {
   const { state, dispatch } = useAppStore();
-  const { businessType, theme, user } = state;
+  const { theme, user } = state;
 
   // Initialize Auth state from Mock API on mount
   useEffect(() => {
@@ -228,145 +227,6 @@ function App() {
     setShowInstructions(false);
   };
 
-  const daysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
-  const firstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay();
-
-  const handlePrevMonth = () => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1));
-  const handleNextMonth = () => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
-
-  const renderCalendarGrid = (isDashboard = false) => {
-    if (calendarView === 'week' && !isDashboard) {
-      // Week View Logic
-      const startOfWeek = new Date(viewDate);
-      startOfWeek.setDate(viewDate.getDate() - viewDate.getDay());
-      
-      return (
-        <div className="calendar-grid week-view">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => {
-            const date = new Date(startOfWeek);
-            date.setDate(startOfWeek.getDate() + i);
-            const isSelected = !!selectedDates.find(d => 
-              d.getDate() === date.getDate() && 
-              d.getMonth() === date.getMonth() && 
-              d.getFullYear() === date.getFullYear()
-            );
-            const events = scheduledEvents.filter(e => 
-              e.day === date.getDate() && 
-              e.month === date.getMonth() && 
-              e.year === date.getFullYear()
-            );
-
-            return (
-              <div key={day} className="calendar-column">
-                <div className="calendar-day-head">{day} {date.getDate()}</div>
-                <div 
-                  className={`calendar-day week-day ${isSelected ? 'selected' : ''}`}
-                  onMouseDown={() => handleMouseDownOnDate(new Date(date))}
-                  onMouseEnter={() => handleMouseEnterOnDate(new Date(date))}
-                  onClick={() => {}}
-                  style={{ userSelect: 'none' }}
-                >
-                  <div className="day-events-container">
-                    {events.map((e, ei) => (
-                      <div key={ei} className={`calendar-event ${e.type}`} title={e.title}>
-                        <div className="event-time">{e.time}</div>
-                        <div className="event-title">{e.title}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      );
-    }
-
-    // Month View Logic (Original but with multi-select)
-    const firstDay = firstDayOfMonth(viewDate.getMonth(), viewDate.getFullYear());
-    const totalDays = daysInMonth(viewDate.getMonth(), viewDate.getFullYear());
-    
-    return (
-      <div className={`calendar-grid ${isDashboard ? 'dashboard-grid' : ''}`}>
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="calendar-day-head">{day}</div>
-        ))}
-        {Array.from({ length: 42 }).map((_, i) => {
-          const dayNum = i - firstDay + 1;
-          const isCurrentMonth = dayNum > 0 && dayNum <= totalDays;
-          const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNum);
-          const isSelected = !!selectedDates.find(d => 
-            d.getDate() === dayNum && 
-            d.getMonth() === viewDate.getMonth() && 
-            d.getFullYear() === viewDate.getFullYear()
-          );
-          
-          const events = scheduledEvents.filter(e => e.day === dayNum && e.month === viewDate.getMonth() && e.year === viewDate.getFullYear());
-          
-          return (
-            <div 
-              key={i} 
-              className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isCompressed ? 'compressed' : ''} ${isSelected ? 'selected' : ''}`}
-              onMouseDown={() => isCurrentMonth && handleMouseDownOnDate(date)}
-              onMouseEnter={() => isCurrentMonth && handleMouseEnterOnDate(date)}
-              onClick={() => {}}
-              style={{ userSelect: 'none' }}
-            >
-              {isCurrentMonth && (
-                <>
-                  <span className="day-number">{dayNum}</span>
-                  <div className="day-events-container">
-                    {events.map((e, ei) => (
-                      <div key={ei} className={`calendar-event ${e.type}`} title={e.title}>
-                        {isDashboard ? '' : e.title}
-                      </div>
-                    ))}
-                  </div>
-                  {isDashboard && events.length > 0 && (
-                    <span className="event-count-badge">{events.length}</span>
-                  )}
-                </>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
-  const renderCalendarHeader = (isDashboard = false) => (
-    <div className="calendar-header">
-      <div style={{display: 'flex', alignItems: 'center', gap: '1.5rem'}}>
-        <h2 style={{fontSize: '1.25rem', fontWeight: 800, color: '#0A192F'}}>
-          {calendarView === 'month' || isDashboard
-            ? viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })
-            : `Week of ${new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate() - viewDate.getDay()).toLocaleDateString('default', { month: 'short', day: 'numeric' })}`}
-        </h2>
-        <div style={{display: 'flex', gap: '0.25rem', background: '#F1F5F9', padding: '4px', borderRadius: '8px'}}>
-          <button className="btn btn-outline" style={{padding: '0.4rem'}} onClick={handlePrevMonth}><ChevronLeft size={16} /></button>
-          <button className="btn btn-outline" style={{padding: '0.4rem'}} onClick={handleNextMonth}><ChevronRight size={16} /></button>
-        </div>
-      </div>
-      
-      {!isDashboard && (
-        <div className="view-switcher">
-          <button 
-            className={`view-btn ${calendarView === 'month' ? 'active' : ''}`}
-            onClick={() => setCalendarView('month')}
-          >
-            Month
-          </button>
-          <button 
-            className={`view-btn ${calendarView === 'week' ? 'active' : ''}`}
-            onClick={() => setCalendarView('week')}
-          >
-            Week
-          </button>
-        </div>
-      )}
-    </div>
-  );
-
   if (!user) {
     return <Login onLoginSuccess={(u) => dispatch({ type: 'SET_USER', payload: u })} />;
   }
@@ -423,46 +283,18 @@ function App() {
 
         <div className="page-container" style={{paddingTop: 0}}>
           {activeTab === 'dashboard' && (
-            <div className="view-dashboard">
-              <div className="page-header" style={{marginBottom: '1rem'}}>
-                <h1>Command Center</h1>
-                <p style={{color: '#64748B'}}>Overview of your authority footprint.</p>
-              </div>
-              <div className="dashboard-content-layout">
-                <div className="dashboard-stats-column">
-                  <div className="stats-grid" style={{marginBottom: '2rem'}}>
-                    {businessTypes[businessType].stats.map((s, i) => (
-                      <div key={i} className="stat-card">
-                        <h4>{s.l}</h4>
-                        <div className="value">{s.v}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="dashboard-info-card">
-                    <h3>Quick Tips ({businessTypes[businessType].label})</h3>
-                    <ul>
-                      {businessTypes[businessType].tips.map((tip, i) => (
-                        <li key={i}>{tip}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-                <div className="dashboard-calendar-column">
-                  <div className="calendar-container mini-calendar">
-                    {isLoadingData ? (
-                      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                        Loading...
-                      </div>
-                    ) : (
-                      <>
-                        {renderCalendarHeader(true)}
-                        {renderCalendarGrid(true)}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Dashboard
+              isLoadingData={isLoadingData}
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              calendarView={calendarView}
+              setCalendarView={setCalendarView}
+              selectedDates={selectedDates}
+              scheduledEvents={scheduledEvents}
+              isCompressed={isCompressed}
+              handleMouseDownOnDate={handleMouseDownOnDate}
+              handleMouseEnterOnDate={handleMouseEnterOnDate}
+            />
           )}
 
           {activeTab === 'calendar' && (
@@ -493,10 +325,18 @@ function App() {
                     Loading Calendar Data...
                   </div>
                 ) : (
-                  <>
-                    {renderCalendarHeader(false)}
-                    {renderCalendarGrid(false)}
-                  </>
+                  <Calendar
+                    isDashboard={false}
+                    viewDate={viewDate}
+                    setViewDate={setViewDate}
+                    calendarView={calendarView}
+                    setCalendarView={setCalendarView}
+                    selectedDates={selectedDates}
+                    scheduledEvents={scheduledEvents}
+                    isCompressed={isCompressed}
+                    handleMouseDownOnDate={handleMouseDownOnDate}
+                    handleMouseEnterOnDate={handleMouseEnterOnDate}
+                  />
                 )}
               </div>
             </div>
