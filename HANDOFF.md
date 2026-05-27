@@ -1,18 +1,23 @@
 # Session Handoff Log
 
 ## Session Details
-*   **Version Bump:** 1.6.0
+*   **Version Bump:** 1.14.0
 *   **Primary Tasks Completed:**
     *   Transitioned the legacy Real Estate tool into a Universal Business tool.
     *   Created the comprehensive documentation suite mandated by the system protocols (VISION, MEMORY, DEPLOY, IDEAS, CHANGELOG, ROADMAP, TODO, VERSION).
-    *   Aggressively modularized `App.tsx` by extracting the UI into dedicated `src/components/` files (`Sidebar`, `TopBar`, `Settings`, `Analytics`, `ContentLibrary`, `ReviewModal`, `Login`).
+    *   Aggressively modularized `App.tsx` by extracting the UI into dedicated `src/components/` files (`Sidebar`, `TopBar`, `Settings`, `Analytics`, `ContentLibrary`, `ReviewModal`, `Login`, `Dashboard`, `Calendar`, `PlanningHeader`).
     *   Set up a mock asynchronous `api.ts` layer wrapping `localStorage` to simulate networking latency and test UI loading states gracefully.
     *   Established a global state management shell utilizing React Context in `src/store/`.
-    *   Implemented rigorous Vitest testing infrastructure testing critical UI and Logic flows.
+    *   Implemented rigorous Vitest testing infrastructure testing critical UI and Logic flows (31 passing tests).
+    *   Created an automated publishing background worker mock inside `App.tsx`.
+    *   Integrated the OpenAI SDK to generate live, dynamic post content.
+    *   Implemented a mock OAuth 2.0 service shell in `src/services/oauth`.
+    *   Created a `.github/workflows/ci.yml` pipeline for continuous integration.
 *   **Key Learnings:**
-    *   Playwright UI testing requires `force=True` on modal clicks due to viewport/absolute positioning setups.
+    *   Playwright UI testing requires `force=True` on modal clicks or explicit DOM script evaluation (`page.evaluate("document.querySelector('.btn-close')?.click()")`) due to viewport/absolute positioning setups and overlay CSS intercepts.
     *   React fast-refresh strictly requires Context/Providers and Hooks to be exported from independent files (e.g. `store/context.ts` vs `store/types.ts`).
 
 ## State for Successor Models
-*   The application compiles and runs successfully without linting or build errors. All mocked UI features are wired and responsive.
-*   The repository is extremely clean. The Phase 4 architectural milestones are basically complete. You are ready to begin translating the mocked `src/services/api.ts` calls into live endpoints (e.g. OpenAI integration) and transitioning prop-drilling into the `useAppStore` context hooks.
+*   The application compiles and runs successfully without linting or build errors.
+*   The repository is incredibly robust. Phase 1, 2, 3, and 4 roadmap goals are virtually complete with a mix of live services (OpenAI) and high-fidelity mock shells (OAuth/Auth).
+*   **Immediate Next Steps:** If continuing, you may want to port the application from the mock frontend-only environment to a full-stack framework like Next.js to implement actual secure token exchanges and database persistence, as outlined in `IDEAS.md`.
