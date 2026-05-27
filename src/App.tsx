@@ -23,6 +23,7 @@ import { ReviewModal } from './components/ReviewModal';
 import { Login } from './components/Login';
 import { Analytics } from './components/Analytics';
 import { ContentLibrary } from './components/ContentLibrary';
+import { Settings } from './components/Settings';
 import { api } from './services/api';
 import { type User } from './types/api';
 
@@ -599,6 +600,8 @@ function App() {
           )}
 
           {activeTab === 'analytics' && <Analytics />}
+
+          {activeTab === 'settings' && <Settings />}
         </div>
       </main>
 

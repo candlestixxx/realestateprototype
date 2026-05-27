@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - OAuth Integration Settings Mockup
+### Added
+- **Settings View**: Created `src/components/Settings.tsx` to handle OAuth platform toggling (Facebook, Instagram, LinkedIn).
+- **Sidebar Integration**: Added a "Settings" tab to the main navigation menu using the `Settings2` icon.
+
 ## [1.0.0] - Content Filtering & V1 Stable Release
 ### Added
 - **Content Library Filtering**: Added a filter bar to the Content Library allowing users to instantly sort historical and upcoming posts by category type (`all`, `listing`, `report`, `social`).
