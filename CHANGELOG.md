@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - Expanded Component Test Coverage
+### Added
+- **Component Tests**: Created robust Vitest unit tests for the `Sidebar` and `InstructionsModal` components evaluating rendering states and event fires.
+- **Global Setup**: Implemented a global `setupTests.ts` configuration to provide `@testing-library/jest-dom` assertions universally across all test suites.
+
 ## [1.2.0] - Unit Testing Infrastructure
 ### Added
 - **Vitest & RTL Integration**: Configured `vitest`, `jsdom`, and `@testing-library/react` for robust component unit testing.
