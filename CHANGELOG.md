@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - Planning Header Component Extraction
+### Added
+- **Planning Header**: Extracted the `PlanningHeader` logic and UI out of `App.tsx` into a dedicated component.
+- **Component Tests**: Authored `PlanningHeader.test.tsx` to verify component rendering states based on `selectedDates` and `isGenerating` props.
+
 ## [1.8.0] - State Migration & Cleanup
 ### Changed
 - **App.tsx State Refactor**: Migrated `currentUser`, `selectedBusinessType`, and `isDarkMode` local states entirely into the newly built Global App Context.
