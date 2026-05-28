@@ -1,8 +1,3 @@
-/**
- * Simulates a network delay for OAuth handshakes.
- */
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export type SocialPlatform = 'facebook' | 'instagram' | 'linkedin' | 'twitter';
 
 export interface OAuthConnectionState {
@@ -12,54 +7,80 @@ export interface OAuthConnectionState {
   twitter: boolean;
 }
 
-const OAUTH_STORAGE_KEY = 'legacy_oauth_connections';
+const TOKEN_KEY = 'legacy_auth_token';
+
+const getHeaders = () => {
+  const token = localStorage.getItem(TOKEN_KEY);
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+};
 
 export const oauthService = {
   /**
-   * Fetches the current connection status from localStorage.
+   * Fetches the current connection status from the backend.
    */
-  getConnections: (): OAuthConnectionState => {
-    const saved = localStorage.getItem(OAUTH_STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse oauth connections", e);
+  getConnections: async (): Promise<OAuthConnectionState> => {
+    try {
+      const response = await fetch('/api/oauth/status', {
+        headers: getHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      return await response.json();
+    } catch (e) {
+      console.error("Failed to fetch oauth connections", e);
+      return {
+        facebook: false,
+        instagram: false,
+        linkedin: false,
+        twitter: false
+      };
     }
-    return {
-      facebook: false,
-      instagram: false,
-      linkedin: false,
-      twitter: false
-    };
   },
 
   /**
-   * Simulates the OAuth connection flow (redirect to provider, token exchange, save to DB).
+   * Initiates the OAuth connection flow via backend.
    */
   connectPlatform: async (platform: SocialPlatform): Promise<boolean> => {
-    // Simulate OAuth redirect and token exchange latency
-    await delay(1500);
-
-    const connections = oauthService.getConnections();
-    connections[platform] = true;
-    localStorage.setItem(OAUTH_STORAGE_KEY, JSON.stringify(connections));
-
-    return true;
+    try {
+      const response = await fetch('/api/oauth/connect', {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ platform })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data.connected;
+    } catch (e) {
+      console.error("Failed to connect platform", e);
+      return false;
+    }
   },
 
   /**
-   * Simulates revoking a token and disconnecting a platform.
+   * Disconnects a platform via backend.
    */
   disconnectPlatform: async (platform: SocialPlatform): Promise<boolean> => {
-    // Simulate revocation request to provider
-    await delay(800);
-
-    const connections = oauthService.getConnections();
-    connections[platform] = false;
-    localStorage.setItem(OAUTH_STORAGE_KEY, JSON.stringify(connections));
-
-    return true;
+    try {
+      const response = await fetch('/api/oauth/disconnect', {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ platform })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      // data.connected should be false after disconnect
+      return !data.connected;
+    } catch (e) {
+      console.error("Failed to disconnect platform", e);
+      return false;
+    }
   }
 };

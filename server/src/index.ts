@@ -133,6 +133,86 @@ app.post('/api/auth/login', async (req, res) => {
 
 // --- PROTECTED ENDPOINTS ---
 
+// OAuth Status
+app.get('/api/oauth/status', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const db = await getDb();
+    const userId = req.user!.id;
+
+    // Get connections for user
+    const connections = await db.all('SELECT platform, connected FROM oauth_connections WHERE user_id = ?', [userId]);
+
+    // Format response to match frontend expectations: { facebook: true, instagram: false, ... }
+    const statusMap: Record<string, boolean> = {
+      facebook: false,
+      instagram: false,
+      linkedin: false,
+      twitter: false
+    };
+
+    connections.forEach((conn) => {
+      statusMap[conn.platform] = conn.connected === 1;
+    });
+
+    res.json(statusMap);
+  } catch (error) {
+    console.error("Fetch OAuth status error:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// OAuth Connect
+app.post('/api/oauth/connect', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { platform } = req.body;
+    if (!platform) {
+      return res.status(400).json({ error: 'Platform is required' });
+    }
+
+    const db = await getDb();
+    const userId = req.user!.id;
+
+    // Simulate OAuth mock token
+    const mockToken = `mock_token_${platform}_${Math.random().toString(36).substring(7)}`;
+
+    await db.run(
+      `INSERT INTO oauth_connections (user_id, platform, connected, mock_token)
+       VALUES (?, ?, 1, ?)
+       ON CONFLICT(user_id, platform) DO UPDATE SET connected = 1, mock_token = ?`,
+      [userId, platform, mockToken, mockToken]
+    );
+
+    res.json({ success: true, platform, connected: true });
+  } catch (error) {
+    console.error("OAuth connect error:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// OAuth Disconnect
+app.post('/api/oauth/disconnect', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { platform } = req.body;
+    if (!platform) {
+      return res.status(400).json({ error: 'Platform is required' });
+    }
+
+    const db = await getDb();
+    const userId = req.user!.id;
+
+    await db.run(
+      `UPDATE oauth_connections SET connected = 0, mock_token = NULL
+       WHERE user_id = ? AND platform = ?`,
+      [userId, platform]
+    );
+
+    res.json({ success: true, platform, connected: false });
+  } catch (error) {
+    console.error("OAuth disconnect error:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/api/events', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const db = await getDb();

@@ -3,7 +3,7 @@
 ## Pending Architecture & Integration (Phase 2 & 3)
 *   [x] Connect the front-end to a live OpenAI/Claude endpoint for actual dynamic post generation.
 *   [x] Establish secure user authentication and profile management (Implemented via Backend SQLite and JWT Tokens).
-*   [x] Integrate OAuth 2.0 flows for major social media platforms (Implemented frontend service shell and UX).
+*   [x] Integrate OAuth 2.0 flows for major social media platforms (Implemented frontend-to-backend API pipeline).
 
 ## Pending Architecture & Integration (Phase 4 Refactoring)
 *   [x] Migrate local component states in `App.tsx` (like active user, theme, and selected business type) to rely entirely on the newly created Global Context provider and reducer dispatches.

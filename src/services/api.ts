@@ -97,7 +97,7 @@ export const api = {
       try {
         const err = await response.json();
         errMessage = err.error || errMessage;
-      } catch (e) {
+      } catch {
         // Fallback for HTML error pages (e.g., 502/504 Bad Gateway from proxy)
       }
       throw new Error(errMessage);

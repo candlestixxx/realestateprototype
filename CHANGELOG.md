@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.0] - OAuth 2.0 Backend Integration
+### Added
+- **OAuth Backend Integration**: Implemented `/api/oauth/connect`, `/api/oauth/status`, and `/api/oauth/disconnect` endpoints.
+- **Database Schema**: Added `oauth_connections` table to SQLite database tracking per-user social media integrations.
+- **Full-Stack Connection Wiring**: Refactored frontend `oauthService` to synchronize with the new backend API endpoints rather than utilizing `localStorage`.
+
+### Changed
+- Re-architected the Settings interface to asynchronously fetch connection states, ensuring robust real-time synchronization with the database.
+
 ## [1.16.0] - JWT Authentication & User Profiles
 ### Added
 - **JWT Authentication Flow**: Implemented fully functional user authentication via `/api/auth/register` and `/api/auth/login`.

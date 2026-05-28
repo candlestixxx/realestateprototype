@@ -36,6 +36,16 @@ export const initDb = async () => {
       status TEXT,
       FOREIGN KEY(user_id) REFERENCES users(id)
     );
+
+    CREATE TABLE IF NOT EXISTS oauth_connections (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      platform TEXT NOT NULL,
+      connected BOOLEAN NOT NULL DEFAULT 0,
+      mock_token TEXT,
+      UNIQUE(user_id, platform),
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    );
   `);
 
   return dbInstance;

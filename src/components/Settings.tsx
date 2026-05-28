@@ -16,7 +16,11 @@ export const Settings = ({ setNotification }: SettingsProps) => {
   const [loadingPlatform, setLoadingPlatform] = useState<SocialPlatform | null>(null);
 
   useEffect(() => {
-    setConnections(oauthService.getConnections());
+    const fetchConnections = async () => {
+      const dbConnections = await oauthService.getConnections();
+      setConnections(dbConnections);
+    };
+    fetchConnections();
   }, []);
 
   const toggleConnection = async (platform: SocialPlatform) => {
