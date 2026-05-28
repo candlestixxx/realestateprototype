@@ -22,10 +22,10 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const user = await api.login(email);
+      const user = await api.login(email, password);
       onLoginSuccess(user);
-    } catch {
-      setError('An error occurred during authentication.');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'An error occurred during authentication.');
     } finally {
       setIsSubmitting(false);
     }
@@ -56,7 +56,7 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
           </div>
 
           <div className="form-group">
-            <label>Password (Mock)</label>
+            <label>Password</label>
             <input
               type="password"
               placeholder="••••••••"
@@ -71,12 +71,12 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
             className={`btn-primary-gold login-btn ${isSubmitting ? 'loading' : ''}`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Authenticating...' : 'Sign In'}
+            {isSubmitting ? 'Authenticating...' : 'Sign In / Register'}
           </button>
         </form>
 
         <div className="login-footer">
-          <p>This is a mock authentication UI. Any email will work.</p>
+          <p>New users are automatically registered upon first login.</p>
         </div>
       </div>
     </div>

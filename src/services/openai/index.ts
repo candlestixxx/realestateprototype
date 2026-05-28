@@ -5,10 +5,13 @@ import { type AIGenerationRequest, type AIGenerationResponse } from '../../types
  */
 export const generateAIContent = async (request: AIGenerationRequest): Promise<AIGenerationResponse> => {
   try {
+    const token = localStorage.getItem('legacy_auth_token');
+
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: JSON.stringify(request),
     });

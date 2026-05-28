@@ -2,7 +2,7 @@
 
 ## Pending Architecture & Integration (Phase 2 & 3)
 *   [x] Connect the front-end to a live OpenAI/Claude endpoint for actual dynamic post generation.
-*   [x] Establish secure user authentication and profile management (Implemented mock UX flow).
+*   [x] Establish secure user authentication and profile management (Implemented via Backend SQLite and JWT Tokens).
 *   [x] Integrate OAuth 2.0 flows for major social media platforms (Implemented frontend service shell and UX).
 
 ## Pending Architecture & Integration (Phase 4 Refactoring)

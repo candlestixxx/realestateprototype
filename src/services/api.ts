@@ -3,6 +3,7 @@ import { type User, type AnalyticsData } from '../types/api';
 
 const STORAGE_KEY = 'legacy_calendar_events';
 const AUTH_KEY = 'legacy_auth_user';
+const TOKEN_KEY = 'legacy_auth_token';
 const MOCK_DELAY_MS = 600;
 
 /**
@@ -10,8 +11,16 @@ const MOCK_DELAY_MS = 600;
  */
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+const getHeaders = () => {
+  const token = localStorage.getItem(TOKEN_KEY);
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+};
+
 /**
- * Mock API Service to handle data persistence asynchronously.
+ * API Service to handle data persistence and backend communication.
  */
 export const api = {
   /**
@@ -19,7 +28,9 @@ export const api = {
    */
   fetchEvents: async (): Promise<CalendarEvent[]> => {
     try {
-      const response = await fetch('/api/events');
+      const response = await fetch('/api/events', {
+        headers: getHeaders()
+      });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -39,9 +50,7 @@ export const api = {
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getHeaders(),
         body: JSON.stringify(events),
       });
       if (!response.ok) {
@@ -58,30 +67,59 @@ export const api = {
   },
 
   /**
-   * Mocks a login authentication request.
+   * Authenticates the user via the backend API.
+   * If login fails, tries to register them (simplified UX for prototype).
    */
-  login: async (email: string): Promise<User> => {
-    await delay(1000); // Slightly longer delay for "auth"
-    const mockUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: email.split('@')[0] || 'Demo User',
-      email: email,
-      avatar: (email.split('@')[0] || 'D').substring(0, 2).toUpperCase()
-    };
-    localStorage.setItem(AUTH_KEY, JSON.stringify(mockUser));
-    return mockUser;
+  login: async (email: string, password?: string): Promise<User> => {
+    const pwd = password || 'password'; // fallback for prototype tests
+
+    let response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pwd })
+    });
+
+    // If invalid credentials, attempt registration (for ease of use in the prototype)
+    if (response.status === 401) {
+      response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password: pwd,
+          name: email.split('@')[0] || 'Demo User'
+        })
+      });
+    }
+
+    if (!response.ok) {
+      let errMessage = 'Authentication failed';
+      try {
+        const err = await response.json();
+        errMessage = err.error || errMessage;
+      } catch (e) {
+        // Fallback for HTML error pages (e.g., 502/504 Bad Gateway from proxy)
+      }
+      throw new Error(errMessage);
+    }
+
+    const data = await response.json();
+    localStorage.setItem(AUTH_KEY, JSON.stringify(data.user));
+    localStorage.setItem(TOKEN_KEY, data.token);
+    return data.user;
   },
 
   /**
-   * Mocks a logout authentication request.
+   * Logs out the user by clearing storage.
    */
   logout: async (): Promise<void> => {
-    await delay(MOCK_DELAY_MS);
+    await delay(300);
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(TOKEN_KEY);
   },
 
   /**
-   * Retrieves the currently authenticated mock user from storage.
+   * Retrieves the currently authenticated user from storage.
    */
   getCurrentUser: (): User | null => {
     const saved = localStorage.getItem(AUTH_KEY);

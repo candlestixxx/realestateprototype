@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.0] - JWT Authentication & User Profiles
+### Added
+- **JWT Authentication Flow**: Implemented fully functional user authentication via `/api/auth/register` and `/api/auth/login`.
+- **Database Persistence**: Implemented a SQLite database (`server/src/db/index.ts`) storing users and events persistently instead of relying exclusively on `localStorage`.
+- **Protected Endpoints**: Locked down `/api/events` and `/api/generate` routes behind `authenticateToken` middleware.
+- **Client Auth Integration**: Updated frontend `api.ts` to store JWTs and attach an `Authorization` header to requests. `Login.tsx` now sends real credentials to the backend.
+
+### Changed
+- Refactored frontend API calls to handle 401 Unauthorized responses to seamlessly clear tokens and manage session state.
+
 ## [1.15.0] - Backend Server Integration (Node.js/Express)
 ### Added
 - **Full-Stack Architecture**: Initialized a Node.js/Express backend server within the `server/` directory.
