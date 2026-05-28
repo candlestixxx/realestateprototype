@@ -43,9 +43,49 @@ const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) 
   });
 };
 
+// --- BACKGROUND WORKER ---
+
+// In a real application, you would use a robust job queue like BullMQ or a cron library.
+// For this prototype, we use setInterval to mimic the worker.
+const startBackgroundWorker = async () => {
+  const db = await getDb();
+
+  setInterval(async () => {
+    try {
+      const now = new Date();
+      // Fetch scheduled events
+      const events = await db.all("SELECT * FROM events WHERE status = 'scheduled'");
+
+      for (const event of events) {
+        // Naive time parsing matching the frontend (e.g., "09:00 AM" to hours)
+        const isPM = event.time.includes('PM');
+        let hours = parseInt(event.time.split(':')[0], 10);
+        if (isPM && hours < 12) hours += 12;
+        if (!isPM && hours === 12) hours = 0;
+
+        const eventDate = new Date(event.year, event.month, event.day, hours);
+
+        if (eventDate <= now) {
+          // Time has passed, "publish" the event
+          // In a real app, this is where you'd retrieve the OAuth token from `oauth_connections`
+          // and make the actual API call to Facebook/Instagram.
+
+          await db.run("UPDATE events SET status = 'published' WHERE id = ?", [event.id]);
+          console.log(`[Worker] Published event ID: ${event.id}`);
+        }
+      }
+    } catch (error) {
+      console.error("[Worker] Error during background publishing job:", error);
+    }
+  }, 10000); // Run every 10 seconds for prototype testing
+};
+
 // Initialize DB and start server
 initDb().then(() => {
   console.log("Database initialized successfully.");
+
+  startBackgroundWorker();
+  console.log("Background publishing worker started.");
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
