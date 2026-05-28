@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - Backend Server Integration (Node.js/Express)
+### Added
+- **Full-Stack Architecture**: Initialized a Node.js/Express backend server within the `server/` directory.
+- **API Endpoints**: Created `/api/events` (GET/POST) and `/api/generate` (POST) to serve data.
+- **Security**: Migrated the OpenAI API integration from the client-side browser logic to the secure backend server, hiding API keys from network traces.
+- **Proxy Configuration**: Updated `vite.config.ts` to proxy frontend `/api` requests to the local `http://localhost:3001` Express server during development.
+
 ## [1.14.0] - OAuth Service Shell & CI/CD Pipeline
 ### Added
 - **Mock OAuth Service**: Implemented `src/services/oauth/index.ts` to simulate asynchronous token handshakes and store connection states securely in `localStorage`.

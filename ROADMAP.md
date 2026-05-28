@@ -7,7 +7,7 @@
 
 ## Phase 2: AI & Data Plumbing
 *   [x] Connect the front-end to a live OpenAI/Claude endpoint for actual dynamic post generation.
-*   [x] Implement a mock or real database to persist generated events securely rather than relying entirely on `localStorage`.
+*   [x] Implement a mock or real database to persist generated events securely rather than relying entirely on `localStorage` (Node.js/Express backend initialized).
 *   [ ] Establish secure user authentication and profile management.
 
 ## Phase 3: The Publishing Engine
