@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.0] - Production Dockerization
+### Added
+- **Docker Support**: Created a multi-stage `Dockerfile` supporting combined frontend and backend builds in a single container.
+- **Static File Serving**: Configured the Express backend to serve the compiled Vite static assets from the `/dist` directory in production.
+- **Root Start Command**: Added an `npm start` script to the root `package.json` to easily bootstrap the production server.
+
 ## [1.17.0] - OAuth 2.0 Backend Integration
 ### Added
 - **OAuth Backend Integration**: Implemented `/api/oauth/connect`, `/api/oauth/status`, and `/api/oauth/disconnect` endpoints.

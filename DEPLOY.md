@@ -33,3 +33,19 @@ Before pushing code, ensure that all linting checks pass:
 ```bash
 npm run lint
 ```
+## Production Docker Deployment
+
+The application includes a multi-stage `Dockerfile` to build and serve the complete full-stack environment from a single lightweight container.
+
+### Building the Image
+Run the following command from the root directory:
+```bash
+docker build -t realestate-universal-app .
+```
+
+### Running the Container
+```bash
+docker run -p 3001:3001 -d realestate-universal-app
+```
+
+The application will be accessible at `http://localhost:3001`. The Express API and background worker will operate over the same port, while statically serving the compiled React frontend.

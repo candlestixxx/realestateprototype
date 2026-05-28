@@ -10,6 +10,7 @@
 *   [x] De-couple structural header and dashboard views from `App.tsx` into modular files (`PlanningHeader.tsx`, `Dashboard.tsx`, `Calendar.tsx`).
 *   [x] Implement GitHub Actions CI/CD Pipeline.
 *   [x] Establish Node.js API backend to decouple secret logic (like OpenAI keys) from the frontend build.
+*   [x] Dockerize the application for unified production deployment.
 
 ## UI/UX Enhancements
 *   [x] Enhance Content Library with filtering and sorting capabilities.

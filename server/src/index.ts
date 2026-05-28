@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import path from 'path';
 import { getDb, initDb } from './db';
 
 dotenv.config();
@@ -378,4 +379,14 @@ app.post('/api/generate', authenticateToken, async (req, res) => {
       error: error instanceof Error ? error.message : "An unknown error occurred during AI generation."
     });
   }
+});
+
+// --- STATIC FRONTEND SERVING (PRODUCTION) ---
+// Serve frontend build files
+const frontendPath = path.join(__dirname, '../../dist');
+app.use(express.static(frontendPath));
+
+// Catch-all to serve index.html for React Router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });

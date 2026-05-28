@@ -34,3 +34,6 @@ jobs:
 
     - name: Build project
       run: npm run build
+
+    - name: Build backend server
+      run: cd server && npm run build
