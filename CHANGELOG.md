@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22.0] - Cross-Platform Execution Scripts
+### Added
+- **Batch Scripts**: Created `start.sh`, `start.bat`, `build.sh`, and `build.bat` to unify cross-platform startup and build commands across the repository as mandated by synchronization protocols.
+
 ## [1.19.0] - Production Dockerization
 ### Added
 - **Docker Support**: Created a multi-stage `Dockerfile` supporting combined frontend and backend builds in a single container.
