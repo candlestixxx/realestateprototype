@@ -15,6 +15,10 @@
 *   [x] Build a background worker system to dispatch scheduled posts at exact requested times (Mock Worker Shell Completed).
 *   [x] Create analytical dashboards to pull back real engagement metrics from live posts (UI Mock Completed).
 
+## Phase 5: Omni-channel Engine
+*   [x] Establish backend dispatcher logic routing content to authorized OAuth third-party services.
+*   [ ] Connect true platform API SDKs to replace local stubs.
+
 ## Phase 4: Refactoring and Scalability
 *   [x] Refactor `App.tsx` into a robust, multi-directory component library.
 *   [x] Implement comprehensive unit and integration testing via Jest and Playwright (Vitest base configured).

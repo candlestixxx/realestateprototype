@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import { getDb, initDb } from './db';
+import { socialPublishers } from './services/social';
 
 dotenv.config();
 
@@ -68,11 +69,36 @@ const startBackgroundWorker = async () => {
 
         if (eventDate <= now) {
           // Time has passed, "publish" the event
-          // In a real app, this is where you'd retrieve the OAuth token from `oauth_connections`
-          // and make the actual API call to Facebook/Instagram.
+          // Check for valid OAuth connections for this user
+          const connections = await db.all("SELECT platform, mock_token FROM oauth_connections WHERE user_id = ? AND connected = 1", [event.user_id]);
 
-          await db.run("UPDATE events SET status = 'published' WHERE id = ?", [event.id]);
-          console.log(`[Worker] Published event ID: ${event.id}`);
+          let successfullyPublishedToNetwork = false;
+
+          if (connections && connections.length > 0) {
+            // Attempt to publish to all connected networks concurrently
+            const publishPromises = connections.map(async (conn) => {
+               const platform = conn.platform as keyof typeof socialPublishers;
+               const publisher = socialPublishers[platform];
+
+               if (publisher) {
+                 return publisher(event.content || event.title, conn.mock_token);
+               }
+               return false;
+            });
+
+            const results = await Promise.allSettled(publishPromises);
+            successfullyPublishedToNetwork = results.some(r => r.status === 'fulfilled' && r.value === true);
+          } else {
+             console.log(`[Worker] No active OAuth connections for user ${event.user_id}. Simulating local publish only.`);
+             successfullyPublishedToNetwork = true; // Still update internal DB state for the prototype
+          }
+
+          if (successfullyPublishedToNetwork) {
+            await db.run("UPDATE events SET status = 'published' WHERE id = ?", [event.id]);
+            console.log(`[Worker] Published event ID: ${event.id}`);
+          } else {
+            console.log(`[Worker] Failed to publish event ID: ${event.id}`);
+          }
         }
       }
     } catch (error) {

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23.0] - Omni-channel Publishing Engine
+### Added
+- **Social Media API Stubs**: Created backend service stubs (`server/src/services/social/`) for Facebook, Instagram, LinkedIn, and Twitter to prepare for real-world Graph API interactions.
+- **Dynamic Background Dispatch**: Refactored the backend background worker to intelligently query a user's active `oauth_connections` and concurrently dispatch scheduled content to all authorized platform stubs simultaneously.
+
 ## [1.22.0] - Cross-Platform Execution Scripts
 ### Added
 - **Batch Scripts**: Created `start.sh`, `start.bat`, `build.sh`, and `build.bat` to unify cross-platform startup and build commands across the repository as mandated by synchronization protocols.

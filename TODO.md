@@ -5,6 +5,10 @@
 *   [x] Establish secure user authentication and profile management (Implemented via Backend SQLite and JWT Tokens).
 *   [x] Integrate OAuth 2.0 flows for major social media platforms (Implemented frontend-to-backend API pipeline).
 
+## Omni-channel Publishing (Phase 5 Prep)
+*   [x] Establish backend service stubs for Facebook, Instagram, LinkedIn, and Twitter APIs.
+*   [x] Wire the automated publishing worker to execute against a user's verified OAuth connections rather than blindly updating the database.
+
 ## Pending Architecture & Integration (Phase 4 Refactoring)
 *   [x] Satisfy final synchronization directives by generating root repository `.bat` and `.sh` execution scripts.
 *   [x] Migrate local component states in `App.tsx` (like active user, theme, and selected business type) to rely entirely on the newly created Global Context provider and reducer dispatches.
