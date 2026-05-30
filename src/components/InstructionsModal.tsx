@@ -1,5 +1,3 @@
-import { X } from 'lucide-react';
-
 interface InstructionsModalProps {
   showInstructions: boolean;
   dontShowAgain: boolean;
@@ -20,9 +18,6 @@ export const InstructionsModal = ({
       <div className="modal-content instructions-modal">
         <div className="modal-header">
           <h2>Welcome to AI Content Planner</h2>
-          <button className="btn-close" onClick={handleCloseInstructions}>
-            <X size={20} />
-          </button>
         </div>
         <div className="instructions-body">
           <p>
@@ -64,6 +59,8 @@ export const InstructionsModal = ({
           <button
             className="btn-primary-gold"
             onClick={handleCloseInstructions}
+            disabled={!dontShowAgain}
+            style={{ opacity: !dontShowAgain ? 0.5 : 1, cursor: !dontShowAgain ? 'not-allowed' : 'pointer' }}
           >
             Got it, Let's go!
           </button>

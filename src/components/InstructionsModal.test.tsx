@@ -34,7 +34,7 @@ describe('InstructionsModal Component', () => {
     render(
       <InstructionsModal
         showInstructions={true}
-        dontShowAgain={false}
+        dontShowAgain={true}
         setDontShowAgain={vi.fn()}
         handleCloseInstructions={mockClose}
       />
