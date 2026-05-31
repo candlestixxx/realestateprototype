@@ -28,3 +28,4 @@ dist-ssr
 data/
 metamcp.db
 .hypercode-session.json
+database.sqlite
