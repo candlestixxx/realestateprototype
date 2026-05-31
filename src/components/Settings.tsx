@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Share2, Globe, Link as LinkIcon, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Share2, Globe, Link as LinkIcon, CheckCircle2, AlertCircle, Loader2, Sparkles, Save } from 'lucide-react';
 import { oauthService, type SocialPlatform, type OAuthConnectionState } from '../services/oauth';
+import { api } from '../services/api';
 
 interface SettingsProps {
   setNotification: (msg: string | null) => void;
@@ -14,14 +15,32 @@ export const Settings = ({ setNotification }: SettingsProps) => {
     twitter: false
   });
   const [loadingPlatform, setLoadingPlatform] = useState<SocialPlatform | null>(null);
+  const [brandVoice, setBrandVoice] = useState('Professional and helpful');
+  const [savingVoice, setSavingVoice] = useState(false);
 
   useEffect(() => {
     const fetchConnections = async () => {
       const dbConnections = await oauthService.getConnections();
       setConnections(dbConnections);
     };
+    const fetchVoice = async () => {
+      const voice = await api.getBrandVoice();
+      setBrandVoice(voice);
+    };
     fetchConnections();
+    fetchVoice();
   }, []);
+
+  const handleSaveVoice = async () => {
+    setSavingVoice(true);
+    const success = await api.updateBrandVoice(brandVoice);
+    if (success) {
+      setNotification('AI Persona updated successfully.');
+    } else {
+      setNotification('Failed to update AI Persona.');
+    }
+    setSavingVoice(false);
+  };
 
   const toggleConnection = async (platform: SocialPlatform) => {
     setLoadingPlatform(platform);
@@ -51,6 +70,36 @@ export const Settings = ({ setNotification }: SettingsProps) => {
       </div>
 
       <div className="settings-grid" style={{ display: 'grid', gap: '1.5rem', maxWidth: '800px' }}>
+
+        {/* AI Persona Card */}
+        <div className="setting-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', padding: '12px', borderRadius: '8px', color: 'var(--bg-surface)' }}>
+              <Sparkles size={24} />
+            </div>
+            <div>
+              <h3 style={{ margin: 0, color: 'var(--text-dark)' }}>AI Persona & Brand Voice</h3>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Instruct the AI on how to write content for your brand.</p>
+            </div>
+          </div>
+          <textarea
+            value={brandVoice}
+            onChange={(e) => setBrandVoice(e.target.value)}
+            style={{ width: '100%', minHeight: '100px', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-surface-alt)', color: 'var(--text-dark)', resize: 'vertical' }}
+            placeholder="E.g. Professional and helpful, using emojis sparingly."
+          />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              className="btn-primary-gold"
+              onClick={handleSaveVoice}
+              disabled={savingVoice}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              {savingVoice ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {savingVoice ? 'Saving...' : 'Save Persona'}
+            </button>
+          </div>
+        </div>
 
         {/* Facebook */}
         <div className="setting-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

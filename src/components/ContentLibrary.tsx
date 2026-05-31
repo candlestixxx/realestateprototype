@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { type CalendarEvent } from '../App';
-import { Database, FileText, Users, Calendar as CalendarIcon, Filter, ArrowDownAZ, ArrowUpZA, AlarmClockCheck, CheckCircle2 } from 'lucide-react';
+import { Database, FileText, Users, Calendar as CalendarIcon, Filter, ArrowDownAZ, ArrowUpZA, AlarmClockCheck, CheckCircle2, Image } from 'lucide-react';
 
 interface ContentLibraryProps {
   events: CalendarEvent[];
@@ -125,8 +125,13 @@ export const ContentLibrary = ({ events }: ContentLibraryProps) => {
                   {event.content}
                 </p>
               )}
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
-                Scheduled for {event.time}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  Scheduled for {event.time}
+                </div>
+                <a href="https://www.canva.com/design" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+                  <Image size={14} /> Design with Canva
+                </a>
               </div>
             </div>
           ))}

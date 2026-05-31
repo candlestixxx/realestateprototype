@@ -143,5 +143,31 @@ export const api = {
       clicks: 18320,
       conversions: 450
     };
+  },
+
+  getBrandVoice: async (): Promise<string> => {
+    try {
+      const response = await fetch('/api/user/brand-voice', {
+        headers: getHeaders()
+      });
+      if (!response.ok) throw new Error('Failed to fetch brand voice');
+      const data = await response.json();
+      return data.brand_voice;
+    } catch {
+      return 'Professional and helpful';
+    }
+  },
+
+  updateBrandVoice: async (voice: string): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/user/brand-voice', {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify({ voice })
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   }
 };

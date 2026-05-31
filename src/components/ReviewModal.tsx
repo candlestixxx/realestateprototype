@@ -1,4 +1,4 @@
-import { X, Save, Edit3 } from 'lucide-react';
+import { X, Save, Edit3, Image } from 'lucide-react';
 import { type CalendarEvent } from '../App';
 
 interface ReviewModalProps {
@@ -60,6 +60,11 @@ export const ReviewModal = ({
                   placeholder="Generated post content will appear here..."
                   rows={4}
                 />
+                <div style={{ marginTop: '0.75rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <a href="https://www.canva.com/design" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+                    <Image size={14} /> Design with Canva
+                  </a>
+                </div>
               </div>
             ))}
           </div>
