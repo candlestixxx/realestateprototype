@@ -182,3 +182,11 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Refactored hardcoded UI elements in `App.tsx` to dynamically parse from the `businessTypes` configuration array.
 - Redesigned the top navigation bar to elegantly accommodate the new business selector dropdown menu.
+## [1.24.0] - AI Persona & Omni-channel UI Extensions
+### Added
+- **AI Persona Customization**: Users can now define a persistent `brand_voice` in the Settings tab. This persona is persisted in the SQLite `users` table and dynamically injected into the `/api/generate` OpenAI system prompt to tailor generated content specifically to the brand's tone.
+- **Canva Integration**: Added contextual "Design with Canva" deep links into the Review Drafts modal and the Content Library cards, preparing for Phase 5 design flow expansions.
+- **Twitter SDK**: Upgraded the mock Twitter publishing backend to conditionally utilize the `twitter-api-v2` SDK if valid environment credentials are provided.
+
+### Changed
+- **Onboarding UX**: The initial Instructions modal now strictly requires users to interact with the acknowledgement checkbox, as the "Got it" button is disabled by default and the header close button was removed.
