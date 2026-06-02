@@ -20,7 +20,8 @@ export const initDb = async () => {
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       name TEXT NOT NULL,
-      avatar TEXT
+      avatar TEXT,
+      brand_voice TEXT DEFAULT 'Professional and helpful'
     );
 
     CREATE TABLE IF NOT EXISTS events (

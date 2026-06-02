@@ -24,3 +24,5 @@
 *   [x] Implement comprehensive unit and integration testing via Jest and Playwright (Vitest base configured).
 *   [x] Establish Global State Management shells (React Context created in `src/store`).
 *   [x] Deploy the staging and production environments using CI/CD pipelines (GitHub Actions Workflow Created and Dockerfile established).
+## Phase 6: Next.js Port
+* [ ] Initialize Next.js project shell
