@@ -16,6 +16,9 @@
 - **Port Management:** Running the dev server concurrently (`npm run dev`) frequently leaves dangling Node background processes binding ports 3001 and 5173. Be sure to run `kill $(lsof -t -i :3001)` routinely when setting up the environment.
 
 ## Next Steps
+- Replaced backend publishing stubs with actual implementations for Facebook Graph API, Instagram Graph API, and LinkedIn UGC API using `axios`.
+
+## Next Steps
 The immediate user directives have been completely addressed. For the next session, consult `IDEAS.md` or `ROADMAP.md`.
 Recommended immediate actions:
 - Implement Next.js Server-Side Rendering (SSR) porting.
