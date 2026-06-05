@@ -38,4 +38,5 @@ client-next/node_modules/
 # Next.js
 client-next/.next/
 client-next/node_modules/
-client-next/out/
+client-next/out/# Exclude the entire Next directory for now until ready
+client-next/
