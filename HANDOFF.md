@@ -17,8 +17,7 @@
 
 ## Next Steps
 - Replaced backend publishing stubs with actual implementations for Facebook Graph API, Instagram Graph API, and LinkedIn UGC API using `axios`.
-
-## Next Steps
+- Initialized the Next.js target architecture in `client-next/` directory to begin Phase 6.
 The immediate user directives have been completely addressed. For the next session, consult `IDEAS.md` or `ROADMAP.md`.
 Recommended immediate actions:
 - Implement Next.js Server-Side Rendering (SSR) porting.

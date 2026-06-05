@@ -31,12 +31,6 @@ metamcp.db
 database.sqlite
 
 # Next.js
-.next/
-client-next/node_modules/
-
-
-# Next.js
 client-next/.next/
 client-next/node_modules/
-client-next/out/# Exclude the entire Next directory for now until ready
-client-next/
+client-next/out/
