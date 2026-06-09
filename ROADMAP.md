@@ -17,10 +17,12 @@
 
 ## Phase 5: Omni-channel Engine
 *   [x] Establish backend dispatcher logic routing content to authorized OAuth third-party services.
-*   [ ] Connect true platform API SDKs to replace local stubs.
+*   [x] Connect true platform API SDKs to replace local stubs.
 
 ## Phase 4: Refactoring and Scalability
 *   [x] Refactor `App.tsx` into a robust, multi-directory component library.
 *   [x] Implement comprehensive unit and integration testing via Jest and Playwright (Vitest base configured).
 *   [x] Establish Global State Management shells (React Context created in `src/store`).
 *   [x] Deploy the staging and production environments using CI/CD pipelines (GitHub Actions Workflow Created and Dockerfile established).
+## Phase 6: Next.js Port
+* [ ] Initialize Next.js project shell
