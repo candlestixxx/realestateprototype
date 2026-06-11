@@ -20,8 +20,23 @@ export const initDb = async () => {
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       name TEXT NOT NULL,
-      avatar TEXT
+      avatar TEXT,
+      brand_voice TEXT DEFAULT 'Professional and helpful'
     );
+  `);
+
+  try {
+    // Attempt to migrate existing tables
+    await dbInstance.exec(`ALTER TABLE users ADD COLUMN brand_voice TEXT DEFAULT 'Professional and helpful'`);
+    console.log('[DB] Migration successful: Added brand_voice column to users table.');
+  } catch (error: any) {
+    // Ignore error if column already exists
+    if (!error.message.includes('duplicate column name')) {
+      console.error('[DB] Migration error adding brand_voice column:', error);
+    }
+  }
+
+  await dbInstance.exec(`
 
     CREATE TABLE IF NOT EXISTS events (
       id TEXT PRIMARY KEY,

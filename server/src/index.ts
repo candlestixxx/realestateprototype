@@ -280,6 +280,38 @@ app.post('/api/oauth/disconnect', authenticateToken, async (req: AuthRequest, re
   }
 });
 
+
+// User Brand Voice
+app.get('/api/user/brand-voice', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const db = await getDb();
+    const userId = req.user!.id;
+    const user = await db.get('SELECT brand_voice FROM users WHERE id = ?', [userId]);
+    res.json({ brand_voice: user?.brand_voice || 'Professional and helpful' });
+  } catch (error) {
+    console.error("Fetch brand voice error:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/api/user/brand-voice', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { voice } = req.body;
+    if (typeof voice !== 'string') {
+      return res.status(400).json({ error: 'Voice must be a string' });
+    }
+
+    const db = await getDb();
+    const userId = req.user!.id;
+    await db.run('UPDATE users SET brand_voice = ? WHERE id = ?', [voice, userId]);
+
+    res.json({ success: true, brand_voice: voice });
+  } catch (error) {
+    console.error("Update brand voice error:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/api/events', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const db = await getDb();
@@ -327,7 +359,7 @@ app.post('/api/events', authenticateToken, async (req: AuthRequest, res) => {
   }
 });
 
-app.post('/api/generate', authenticateToken, async (req, res) => {
+app.post('/api/generate', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { topic, businessType, targetDates } = req.body;
 
@@ -335,8 +367,16 @@ app.post('/api/generate', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+
+    const db = await getDb();
+    const userId = req.user!.id;
+    const user = await db.get('SELECT brand_voice FROM users WHERE id = ?', [userId]);
+    const brandVoice = user?.brand_voice || 'Professional and helpful';
+
     const prompt = `
       You are an expert social media manager for a ${businessType} business.
+      Ensure the generated text strictly adheres to the following brand voice and tone: "${brandVoice}".
+
       Generate a highly engaging social media post based on the following topic:
       "${topic}"
 
