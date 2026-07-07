@@ -47,8 +47,13 @@ export const publishToInstagram = async (content: string, accessToken: string): 
 
     console.log(`[Instagram API] Publishing requires Image. Mocking success for text-only prototype.`);
     return true;
-  } catch (error: any) {
-    console.error("[Instagram API] Error publishing to Instagram:", error?.response?.data || error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.error('[Instagram API Error]', (error as any).response?.data || error.message);
+    } else {
+      console.error('[Instagram API Error]', error);
+    }
     return false;
   }
 };

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AppProvider } from "../store/AppProvider";
@@ -14,7 +13,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Universal Business Tool",
   description: "Omni-channel, universal AI-powered content generation and scheduling platform",
 };
