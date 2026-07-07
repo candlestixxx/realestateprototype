@@ -1,11 +1,16 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [1.26.0] - Phase 6 Next.js Migration
+### Added
+- **Next.js Phase 6 Component Porting**: Successfully migrated components, layout logic, styles, context providers, and hooks from Vite/React structure into `client-next/` using Next.js 14 App Router.
+- **SSR Hydration Fixes**: Addressed `localStorage` hydration errors for React context states under Server Side Rendering.
+
 ## [1.25.0] - Phase 6 Migration & Upstream Synchronization
 ### Added
 - **Next.js Phase 6 Foundation**: Merged upstream structural initializations for the Phase 6 server-side rendering migration, establishing the `client-next/` application directory.
 - **Upstream Network Sync**: Resolved complex Git merge histories integrating external Phase 6 architecture commits dynamically into the current operational master branch.
-
-# Changelog
-
-All notable changes to this project will be documented in this file.
 
 ## [1.23.0] - Omni-channel Publishing Engine
 ### Added
