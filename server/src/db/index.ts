@@ -29,9 +29,9 @@ export const initDb = async () => {
     // Attempt to migrate existing tables
     await dbInstance.exec(`ALTER TABLE users ADD COLUMN brand_voice TEXT DEFAULT 'Professional and helpful'`);
     console.log('[DB] Migration successful: Added brand_voice column to users table.');
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Ignore error if column already exists
-    if (!error.message.includes('duplicate column name')) {
+    if (error instanceof Error && !error.message.includes('duplicate column name')) {
       console.error('[DB] Migration error adding brand_voice column:', error);
     }
   }

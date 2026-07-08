@@ -43,8 +43,13 @@ export const publishToLinkedIn = async (content: string, accessToken: string): P
 
     console.log(`[LinkedIn API] Successfully published post URN: ${publishRes.data.id}`);
     return true;
-  } catch (error: any) {
-    console.error("[LinkedIn API] Error publishing to LinkedIn:", error?.response?.data || error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.error('[LinkedIn API Error]', (error as any).response?.data || error.message);
+    } else {
+      console.error('[LinkedIn API Error]', error);
+    }
     return false;
   }
 };

@@ -29,8 +29,13 @@ export const publishToFacebook = async (content: string, accessToken: string): P
 
     console.log(`[Facebook API] Successfully published post ID: ${publishRes.data.id}`);
     return true;
-  } catch (error: any) {
-    console.error("[Facebook API] Error publishing to Facebook:", error?.response?.data || error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.error('[Facebook API Error]', (error as any).response?.data || error.message);
+    } else {
+      console.error('[Facebook API Error]', error);
+    }
     return false;
   }
 };
