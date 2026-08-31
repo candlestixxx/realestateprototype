@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"vite\"",
+    "dev": "concurrently \"npm run server\" \"cd client-next && npm run dev\"",
     "server": "cd server && npm run dev",
-    "build": "tsc -b && vite build",
+    "build": "cd client-next && npm run build",
     "start": "cd server && npm start",
     "lint": "eslint .",
     "preview": "vite preview",
