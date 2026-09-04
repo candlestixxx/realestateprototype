@@ -1,3 +1,4 @@
+import React from "react";
 "use client";
 import { X, Save, Edit3, Image } from 'lucide-react';
 import { type CalendarEvent } from '../App';

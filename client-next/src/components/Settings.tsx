@@ -1,3 +1,4 @@
+import React from "react";
 "use client";
 import { useState, useEffect } from 'react';
 import { Share2, Globe, Link as LinkIcon, CheckCircle2, AlertCircle, Loader2, Sparkles, Save } from 'lucide-react';
