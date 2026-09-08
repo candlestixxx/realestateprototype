@@ -23,11 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Hypercode/Tool specific
-.hypercode/
 data/
 metamcp.db
-.hypercode-session.json
 database.sqlite
 
 # Next.js
