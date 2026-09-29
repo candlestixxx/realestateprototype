@@ -1,3 +1,5 @@
+import React from "react";
+import React from "react";
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PlanningHeader } from './PlanningHeader';
 import { AppContext } from '../store/context';

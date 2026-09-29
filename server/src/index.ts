@@ -449,8 +449,8 @@ app.post('/api/generate', authenticateToken, async (req: AuthRequest, res) => {
 
 // --- STATIC FRONTEND SERVING (PRODUCTION) ---
 // Serve frontend build files
-const frontendPath = path.join(__dirname, '../../dist');
-app.use(express.static(frontendPath));
+const frontendPath = path.join(__dirname, '../../client-next/out');
+app.use(express.static(path.join(__dirname, '../../client-next/out')));
 
 // Catch-all to serve index.html for React Router
 app.get('*', (req, res) => {

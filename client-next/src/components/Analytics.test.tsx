@@ -1,3 +1,5 @@
+import React from "react";
+import React from "react";
 import { render, screen, waitFor } from '@testing-library/react';
 import { Analytics } from './Analytics';
 import { api } from '../services/api';

@@ -20,5 +20,5 @@
 
 ## Next Steps
 - The immediate user directives regarding the initial Phase 6 Next.js migration have been addressed. All components, hooks, styles, and context logic were ported to `client-next/` and verified with a successful production build.
-- The next step is to retire the `src/` directory at the root and migrate testing setups (Vitest) to work cleanly against the Next.js target architecture.
-- Alternatively, continue expanding the API integration layer across `server/src/services/` using real developer API keys where available.
+- The root `src/` directory has been retired and testing setups (Vitest) have been migrated to work cleanly against the Next.js target architecture. GitHub CI pipelines were also updated to target supported Node.js versions (20.x, 22.x).
+- The next step is to expand the API integration layer across `server/src/services/` using real developer API keys where available.
