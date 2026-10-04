@@ -1,5 +1,5 @@
-import React from "react";
 "use client";
+import React from "react";
 import { Search, Briefcase, Moon, Sun, Sparkles, Bell, LogOut } from 'lucide-react';
 import { businessTypes, type BusinessTypeKey } from '../constants';
 import { useAppStore } from '../store/context';

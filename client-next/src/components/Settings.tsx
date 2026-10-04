@@ -1,5 +1,5 @@
-import React from "react";
 "use client";
+import React from "react";
 import { useState, useEffect } from 'react';
 import { Share2, Globe, Link as LinkIcon, CheckCircle2, AlertCircle, Loader2, Sparkles, Save } from 'lucide-react';
 import { oauthService, type SocialPlatform, type OAuthConnectionState } from '../services/oauth';

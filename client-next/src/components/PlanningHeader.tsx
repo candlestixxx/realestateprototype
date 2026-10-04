@@ -1,4 +1,3 @@
-import React from "react";
 "use client";
 import React, { useRef } from 'react';
 import { Calendar as CalendarIcon, X, Sparkles, Upload, Database, Users, FileText } from 'lucide-react';

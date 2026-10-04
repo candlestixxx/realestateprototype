@@ -1,5 +1,5 @@
-import React from "react";
 "use client";
+import React from "react";
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { type AnalyticsData } from '../types/api';

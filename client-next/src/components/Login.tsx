@@ -1,6 +1,5 @@
+"use client";
 import React from "react";
-"use client";
-"use client";
 import { useState } from 'react';
 import { api } from '../services/api';
 import { type User } from '../types/api';

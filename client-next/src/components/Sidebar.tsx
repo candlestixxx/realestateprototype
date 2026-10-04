@@ -1,5 +1,5 @@
-import React from "react";
 "use client";
+import React from "react";
 import { ChevronLeft, ChevronRight, LayoutDashboard, Calendar as CalendarIcon, Library, BarChart2, Settings2 } from 'lucide-react';
 
 interface SidebarProps {

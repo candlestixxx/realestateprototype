@@ -1,5 +1,5 @@
-import React from "react";
 "use client";
+import React from "react";
 interface InstructionsModalProps {
   showInstructions: boolean;
   dontShowAgain: boolean;
