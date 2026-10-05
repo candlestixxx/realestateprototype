@@ -16,6 +16,13 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_dev_key_123';
 
 app.use(cors());
 app.use(express.json());
+// JSON error handler: return JSON instead of HTML stack traces on body-parser errors
+app.use((err: any, _req: any, res: any, next: any) => {
+  if (err?.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'Invalid JSON body' });
+  }
+  next(err);
+});
 
 const apiKey = process.env.OPENAI_API_KEY || 'mock_key_for_tests';
 const openai = new OpenAI({
