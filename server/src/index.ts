@@ -346,6 +346,9 @@ app.post('/api/events', authenticateToken, async (req: AuthRequest, res) => {
     await db.run('DELETE FROM events WHERE user_id = ?', [userId]);
 
     for (const event of newEvents) {
+      if (!event.id || event.day == null || event.month == null || event.year == null || !event.time || !event.title || !event.type) {
+        return res.status(400).json({ error: 'Each event requires id, day, month, year, time, title, type' });
+      }
       await db.run(
         'INSERT INTO events (id, user_id, day, month, year, time, title, type, content, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [event.id, userId, event.day, event.month, event.year, event.time, event.title, event.type, event.content, event.status]
